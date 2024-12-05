@@ -1,9 +1,9 @@
-import { StrictMode, useEffect } from 'react'
-import { createRoot } from 'react-dom/client'
+import ReactDOM from 'react-dom/client'
+import { CssBaseline, StyledEngineProvider, ThemeProvider, createTheme, useMediaQuery } from '@mui/material'
 
-import './index.css'
-import App from './App.tsx'
-import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider, useMediaQuery } from '@mui/material';
+import { StrictMode, useEffect } from 'react';
+import "index.css";
+import App from 'App';
 
 const rootElement = document.getElementById("root");
 
@@ -76,8 +76,8 @@ function Main() {
   );
 }
 
-createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(rootElement!).render(
   <StrictMode>
     <Main/>
   </StrictMode>,
-)
+);
