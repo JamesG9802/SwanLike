@@ -1,6 +1,5 @@
 import { Box, OrbitControls, Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { useState } from 'react'
 
 function App() {
   return (

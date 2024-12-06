@@ -25,3 +25,6 @@ dist-ssr
 
 # Test coverage files
 /coverage
+
+# Build files
+*.tsbuildinfo
