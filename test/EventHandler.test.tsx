@@ -28,17 +28,15 @@ describe("EventHandler.attach", () => {
         const on_test: EventHandler<TestClass, number> = new EventHandler(test);
 
         let output: number = 0;
-        const callback: Listener<TestClass, number> = (sender, ...args) => { 
+        const callback: Listener<TestClass, number> = (sender, args) => { 
             output = sender.field_1;
-            for(const arg of args) {
-                output += arg;
-            }
+            output += args;
         };
 
         expect(on_test.attach(callback)).toBe(true);
-        on_test.notify(5, 10);
+        on_test.notify(5);
 
-        expect(output).toBe(1 + 5 + 10);
+        expect(output).toBe(1 + 5);
     });
     it("should deny duplicate callbacks", () => {
         const test: TestClass = { field_1: 1};

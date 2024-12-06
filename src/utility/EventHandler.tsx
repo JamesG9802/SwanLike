@@ -1,17 +1,24 @@
 /**
  * A callback that is invoked when an event is triggered.
  * @param TSender the object that is being listened for events.
- * @param TArgs any arguments passed to the callbacks.
+ * @param TArgs any argument passed to the callbacks.
  */
-export type Listener<TSender, TArgs> = (sender: TSender, ...args: TArgs[]) => void;
+export type Listener<TSender, TArgs> = (sender: TSender, args: TArgs) => void;
 
 /**
  * Class for managing event listeners and triggering them when necessary.
- * @param TSender
- * @param TArgs
+ * @param TSender the object that is being listened for events.
+ * @param TArgs the type of the argument passed to the callbacks
  */
 export default class EventHandler<TSender, TArgs> {
+    /**
+     * Reference to the source object that event listeners are logically attached to. 
+     */
     private sender: TSender;
+
+    /**
+     * List of all the attached event listeners.
+     */
     private listeners: Listener<TSender, TArgs>[] = [];
 
     constructor(sender: TSender) {
@@ -30,6 +37,7 @@ export default class EventHandler<TSender, TArgs> {
         }
         return false;
     }
+
     /**
      * Detach a listener from the event.
      * @param listener The listener function to be removed.
@@ -45,9 +53,9 @@ export default class EventHandler<TSender, TArgs> {
      * Notify all attached listeners with the provided arguments.
      * @param args The arguments to pass to each listener.
      */
-    notify(...args: TArgs[]): void {
+    notify(args: TArgs): void {
         for (const listener of this.listeners) {
-            listener(this.sender, ...args);
+            listener(this.sender, args);
         }
     }
 }
