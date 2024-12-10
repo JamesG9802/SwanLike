@@ -1,11 +1,14 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths';
+import topLevelAwait from "vite-plugin-top-level-await";
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
+    topLevelAwait()
   ],
   test: {
     globals: true,
@@ -15,6 +18,11 @@ export default defineConfig({
       provider: "v8"
     }
   },
+  build: {
+    rollupOptions: {
+      input: ['index.html', 'editor.html']
+    }
+  },
   base: "/",
-  assetsInclude: "**/*.obj"
+  // assetsInclude: "**/*.json"
 })

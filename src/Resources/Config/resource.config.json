@@ -1,0 +1,19 @@
+{
+    "files": [
+        {
+            "uuid": "1efb71b7-2cc5-6b10-a5e3-0538205da612",
+            "type": "scene",
+            "file_path": "/src/Resources/scene/main.json"
+        },
+        {
+            "uuid": "1efb71b9-2d64-6290-966b-64cc6c6c9778",
+            "type": "component",
+            "file_path": "/src/Three/Components/BoxMesh.tsx"
+        },
+        {
+            "uuid": "1efb73dc-a4a4-6dd0-afc1-84a58ed78a9f",
+            "type": "component",
+            "file_path": "/src/Three/Components/UpDown.tsx"
+        }
+    ]
+}
