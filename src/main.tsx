@@ -1,3 +1,5 @@
+// import log from "loglevel";
+
 import ReactDOM from 'react-dom/client'
 import { CssBaseline, StyledEngineProvider, ThemeProvider, createTheme, useMediaQuery } from '@mui/material'
 
@@ -5,7 +7,9 @@ import { StrictMode, useEffect } from 'react';
 import "index.css";
 import App from 'App';
 
-const rootElement = document.getElementById("root");
+// log.setLevel(0);
+
+const root_element = document.getElementById("root");
 
 const darkTheme = createTheme({ 
   palette: { mode: 'dark' },
@@ -29,22 +33,22 @@ const darkTheme = createTheme({
   components: {
       MuiPopover: {
           defaultProps: {
-            container: rootElement,
+            container: root_element,
           },
         },
       MuiPopper: {
           defaultProps: {
-              container: rootElement,
+              container: root_element,
           },
       },
       MuiDialog: {
           defaultProps: {
-              container: rootElement,
+              container: root_element,
           },
       },
       MuiModal: {
           defaultProps: {
-              container: rootElement,
+              container: root_element,
           },
       },
   }
@@ -60,8 +64,8 @@ function Main() {
   const theme = prefersDarkMode ? darkTheme : lightTheme;
 
   useEffect(() => {
-      rootElement?.classList.add(prefersDarkMode ? "dark" : "light");
-      rootElement?.classList.remove(prefersDarkMode ? "light" : "dark")
+      root_element?.classList.add(prefersDarkMode ? "dark" : "light");
+      root_element?.classList.remove(prefersDarkMode ? "light" : "dark")
   }, [prefersDarkMode]);
 
   return (
@@ -76,7 +80,7 @@ function Main() {
   );
 }
 
-ReactDOM.createRoot(rootElement!).render(
+ReactDOM.createRoot(root_element!).render(
   <StrictMode>
     <Main/>
   </StrictMode>,

@@ -1,4 +1,4 @@
-import EventHandler, { Listener } from 'utility/EventHandler';
+import EventHandler, { Listener } from 'Utility/EventHandler';
 import { expect, it, describe } from 'vitest'
 
 /**

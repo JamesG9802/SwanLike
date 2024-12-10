@@ -1,0 +1,24 @@
+{
+    "entities": [
+        {
+            "components": [
+                {
+                    "uuid": "1efb71b9-2d64-6290-966b-64cc6c6c9778",
+                    "active": true,
+                    "data": {
+                    }
+                },
+                {
+                    "uuid": "1efb73dc-a4a4-6dd0-afc1-84a58ed78a9f",
+                    "active": true,
+                    "data": {
+                    }
+                }
+            ],
+            "name": "Entity 1",
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "scale":    [0, 0, 0]
+        }
+    ]
+}
