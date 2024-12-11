@@ -4,26 +4,7 @@ import { Object3D } from "three";
 import { ResourceManager } from "../Managers/ResourceManager";
 import { WorldManager } from "../Managers/WorldManager";
 import { Entity } from "./Entity";
-
-/**
- * The format of Component config JSONs.
- */
-export type ComponentConfig = {
-    /**
-     * The UUID of the component.
-     */
-    uuid: string,
-
-    /**
-     * Whether the component starts active or not.
-     */
-    active: boolean,
-
-    /**
-     * Any data that the component should receive.
-     */
-    data?: any
-}
+import { ComponentConfig } from "Engine/Config/ComponentConfig";
 
 /**
  * Base class for all scripts attached to entities.
@@ -49,6 +30,7 @@ export default abstract class Component {
      */
     world_manager_ref: WorldManager;
 
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     constructor(data: any, active: boolean, game_object: Object3D, 
         resource_manager_ref: ResourceManager, world_manager_ref: WorldManager
     ) {
@@ -65,6 +47,7 @@ export default abstract class Component {
      * Initialize the component with the data needed to properly handle starting up.
      * @param data - any data for the component.
      */
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     abstract initialize(data: any): void;
 
     /**
@@ -95,15 +78,10 @@ export async function parse_components_from_config(component_config: ComponentCo
     entity: Entity,
     resource_manager: ResourceManager, world_manager: WorldManager): Promise<Component | undefined> 
 {
-    type ComponentConstructor = new (
-        data: any,
-        active: boolean,
-        entity: Entity,
-        resource_manager: ResourceManager,
-        world_manager: WorldManager
-    ) => Component;
+    //  The constructor matches `Component`'s constructor.
+    type ComponentConstructor = new (...args: ConstructorParameters<typeof Component>) => Component;
 
-    let component_module: { default: ComponentConstructor } | undefined = await resource_manager.load(component_config.uuid);
+    const component_module: { default: ComponentConstructor } | undefined = await resource_manager.load(component_config.uuid);
 
     if(component_module == undefined) {
         log.error("Couldn't instantiate the component");
@@ -116,5 +94,5 @@ export async function parse_components_from_config(component_config: ComponentCo
         entity,
         resource_manager,
         world_manager
-    ) as Component;
+    );
 }

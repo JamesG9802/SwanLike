@@ -1,39 +1,5 @@
+import { FileConfig, FileResourceType } from "Engine/Config/FileResourceConfig";
 import log from "loglevel";
-import Identifiable from "Utility/Identifiable";
-
-/**
- * The types of resources.
- */
-export enum FileResourceType {
-    /**
-     * Scenes are the containers for all entities currently executing.
-     */
-    scene,
-
-    /**
-     * Components are scripts that can be attached to entities.
-     */
-    component
-}
-
-/**
- * A FileResource is an UUID tracked resource. 
- */
-export type FileResource = {
-    type: FileResourceType,
-    file_path: string
-} & Identifiable;
-
-
-/**
- * The format of the File Config JSON.
- */
-export type FileConfig = {
-    /**
-     * All the files the application uses.
-     */
-    files: FileResource[];
-}
 
 /**
  * A resource managed by the manager.
@@ -52,6 +18,7 @@ type Resource = {
     /**
      * If `loaded` = false, this is the callback loader. If `loaded` = true, this is the actual data of the resource.
      */
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     data: any
 }
 
@@ -77,9 +44,9 @@ export class ResourceManager {
         //  🥲 Vite can't handle dynamic local file paths.
 
         const scenes = await import.meta.glob("/src/Resources/scene/*.json");
-        const scripts= await import.meta.glob("/src/Three/Components/*.tsx");
+        const scripts= await import.meta.glob("/src/Engine/Scripts/*.tsx");
 
-        const path_to_loader: Map<string, any> = new Map<string, any>();
+        const path_to_loader: Map<string, () => Promise<unknown>> = new Map<string, () => Promise<unknown>>();
 
         for(const path in scenes) {
             path_to_loader.set(path.toLowerCase(), scenes[path]);
