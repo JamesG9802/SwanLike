@@ -1,22 +1,14 @@
 // import { Box, OrbitControls, Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { useEffect, useState } from 'react';
-import { useWorld } from 'Three/World'
+import { useWorld } from 'Engine/World'
 
 import app_config_resource from "resources/config/application.config.json";
 import file_config_resource from "resources/config/resource.config.json";
-import { WorldManager, WorldManagerProvider } from 'Three/Managers/WorldManager';
-import { FileConfig, ResourceManager } from 'Three/Managers/ResourceManager';
-
-/**
- * The format of the Application Config JSON.
- */
-export type ApplicationConfig = {
-  /**
-   * The UUID of the starting scene.
-   */
-  start_scene: string;
-}
+import { WorldManager, WorldManagerProvider } from 'Engine/Managers/WorldManager';
+import { ResourceManager } from 'Engine/Managers/ResourceManager';
+import { ApplicationConfig } from 'Engine/Config/AppConfig';
+import { FileConfig } from 'Engine/Config/FileResourceConfig';
 
 /**
  * Functional component for rendering out the current scene from the World Manager.
@@ -34,11 +26,11 @@ function Scene() {
  */
 function App() {
   const [world_manager, set_world_manager] = useState<WorldManager>();
-  const [_, set_resource_manager] = useState<ResourceManager>();
+  const [, set_resource_manager] = useState<ResourceManager>();
 
   async function Initialize() {
-    const app_config = app_config_resource as any as ApplicationConfig;
-    const file_config = file_config_resource as any as FileConfig;
+    const app_config = app_config_resource as ApplicationConfig;
+    const file_config = file_config_resource as FileConfig;
 
     //  Initializes the resource manager's asset dictionary
     const new_resource_manager = new ResourceManager();
