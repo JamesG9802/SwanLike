@@ -8,7 +8,7 @@ export interface EntityConfig {
      * Any components the entity has.
      */
     components: ComponentConfig[],
-    
+
     /**
      * The name of the entity.
      */

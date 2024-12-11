@@ -7,4 +7,3 @@ export type ApplicationConfig = {
      */
     start_scene: string;
 }
-  

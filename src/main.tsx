@@ -11,51 +11,51 @@ import App from 'App';
 
 const root_element = document.getElementById("root");
 
-const darkTheme = createTheme({ 
+const darkTheme = createTheme({
   palette: { mode: 'dark' },
   typography: {
-      fontFamily: [
-          "Open Sans",
-          "Roboto",
-          "Helvetica",
-          "Arial",
-          "sans-serif",
-          "ui-sans-serif",
-          "system-ui",
-          "Apple Color Emoji",
-          "Segoe UI Emoji",
-          "Segoe UI Symbol",
-          "Noto Color Emoji"
-      ].join(',')
+    fontFamily: [
+      "Open Sans",
+      "Roboto",
+      "Helvetica",
+      "Arial",
+      "sans-serif",
+      "ui-sans-serif",
+      "system-ui",
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      "Noto Color Emoji"
+    ].join(',')
   },
   //  Make portal elements inject into the root element
   //  https://mui.com/material-ui/integrations/interoperability/#tailwind-css
   components: {
-      MuiPopover: {
-          defaultProps: {
-            container: root_element,
-          },
-        },
-      MuiPopper: {
-          defaultProps: {
-              container: root_element,
-          },
+    MuiPopover: {
+      defaultProps: {
+        container: root_element,
       },
-      MuiDialog: {
-          defaultProps: {
-              container: root_element,
-          },
+    },
+    MuiPopper: {
+      defaultProps: {
+        container: root_element,
       },
-      MuiModal: {
-          defaultProps: {
-              container: root_element,
-          },
+    },
+    MuiDialog: {
+      defaultProps: {
+        container: root_element,
       },
+    },
+    MuiModal: {
+      defaultProps: {
+        container: root_element,
+      },
+    },
   }
 });
 
 const lightTheme = createTheme({
-  ...darkTheme, 
+  ...darkTheme,
   palette: { mode: 'light' }
 });
 
@@ -64,17 +64,17 @@ export default function Main() {
   const theme = prefersDarkMode ? darkTheme : lightTheme;
 
   useEffect(() => {
-      root_element?.classList.add(prefersDarkMode ? "dark" : "light");
-      root_element?.classList.remove(prefersDarkMode ? "light" : "dark")
+    root_element?.classList.add(prefersDarkMode ? "dark" : "light");
+    root_element?.classList.remove(prefersDarkMode ? "light" : "dark")
   }, [prefersDarkMode]);
 
   return (
     <>
-      <CssBaseline/>
+      <CssBaseline />
       <StyledEngineProvider injectFirst>
-          <ThemeProvider theme={theme}>
-            <App/>
-          </ThemeProvider>
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
       </StyledEngineProvider>
     </>
   );
@@ -82,6 +82,6 @@ export default function Main() {
 
 ReactDOM.createRoot(root_element!).render(
   <StrictMode>
-    <Main/>
+    <Main />
   </StrictMode>,
 );

@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { generate_UUID } from "Utility/Identifiable";
+import { v6 } from "uuid"
 
 /**
  * Editor for SwanLike.
  */
 export function Editor() {
     const [uuid, set_uuid] = useState<string>("");
-    
+
     return (
         <div>
             <button onClick={() => {
-                const uuid = generate_UUID();
+                const uuid = v6();
                 set_uuid(uuid);
                 navigator.clipboard.writeText(uuid);
             }}>

@@ -10,11 +10,11 @@ type TestClass = {
 
 describe("EventHandler.attach", () => {
     it("should work normally without arguments", () => {
-        const test: TestClass = { field_1: 1};
+        const test: TestClass = { field_1: 1 };
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         let output: number = 0;
-        const callback: Listener<TestClass, void> = (sender) => { 
+        const callback: Listener<TestClass, void> = (sender) => {
             output = sender.field_1;
         };
 
@@ -24,11 +24,11 @@ describe("EventHandler.attach", () => {
         expect(output).toBe(1);
     });
     it("should work normally with arguments", () => {
-        const test: TestClass = { field_1: 1};
+        const test: TestClass = { field_1: 1 };
         const on_test: EventHandler<TestClass, number> = new EventHandler(test);
 
         let output: number = 0;
-        const callback: Listener<TestClass, number> = (sender, args) => { 
+        const callback: Listener<TestClass, number> = (sender, args) => {
             output = sender.field_1;
             output += args;
         };
@@ -39,11 +39,11 @@ describe("EventHandler.attach", () => {
         expect(output).toBe(1 + 5);
     });
     it("should deny duplicate callbacks", () => {
-        const test: TestClass = { field_1: 1};
+        const test: TestClass = { field_1: 1 };
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         const callback: Listener<TestClass, void> = () => { };
-    
+
         expect(on_test.attach(callback)).toBe(true);
         expect(on_test.attach(callback)).toBe(false);
     })
@@ -51,7 +51,7 @@ describe("EventHandler.attach", () => {
 
 describe("EventHandler.detach", () => {
     it("should work normally", () => {
-        const test: TestClass = { field_1: 1};
+        const test: TestClass = { field_1: 1 };
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         let output: number = 0;
@@ -64,7 +64,7 @@ describe("EventHandler.detach", () => {
         expect(output).toBe(0);
     });
     it("should not remove unrelated callbacks", () => {
-        const test: TestClass = { field_1: 1};
+        const test: TestClass = { field_1: 1 };
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         let output: number = 0;
