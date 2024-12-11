@@ -42,18 +42,18 @@ export class Entity extends THREE.Object3D {
      * Invoke all components that need to start.
      */
     start() {
-        for(let i = 0; i < this.components.length; i++) {
+        for (let i = 0; i < this.components.length; i++) {
             this.components[i].start();
         }
     }
-    
+
     /**
      * Invoke all components' update function
      * @param delta - the time since the last frame
      */
     update(delta: number) {
-        for(let i = 0; i < this.components.length; i++) {
-            if(this.components[i].active) {
+        for (let i = 0; i < this.components.length; i++) {
+            if (this.components[i].active) {
                 this.components[i].update(delta);
             }
         }
@@ -73,6 +73,12 @@ export class Entity extends THREE.Object3D {
     will_destroy(): boolean {
         return this._death_flag;
     }
+
+    cleanup() {
+        for (let i = 0; i < this.components.length; i++) {
+            this.components[i].dispose();
+        }
+    }
 }
 
 /**
@@ -82,34 +88,36 @@ export class Entity extends THREE.Object3D {
  * @param world_manager the world manager.
  * @returns 
  */
-export async function parse_entities_from_config(entity_config: EntityConfig, 
+export async function parse_entities_from_config(entity_config: EntityConfig,
     resource_manager: ResourceManager, world_manager: WorldManager
 ): Promise<Entity> {
     const entity = new Entity(entity_config.name);
 
+    entity.position.set(entity_config.position[0], entity_config.position[1], entity_config.position[2])
+
+    entity.rotation.set(entity_config.rotation[0], entity_config.rotation[1], entity_config.rotation[2], "XYZ");
+
+    entity.scale.set(entity_config.scale[0], entity_config.scale[1], entity_config.scale[2]);
+
     const components: Component[] = [];
     const promises: Promise<Component | undefined>[] = [];
 
-    for(let i = 0; i < entity_config.components.length; i++) {
+    for (let i = 0; i < entity_config.components.length; i++) {
         promises.push(parse_components_from_config(entity_config.components[i], entity, resource_manager, world_manager));
     }
 
     const results = await Promise.allSettled(promises);
-    
+
     results.forEach((result) => {
         if (result.status === 'fulfilled') {
-            if(result.value == undefined) {
+            if (result.value == undefined) {
                 log.error("Component did not load.");
             }
             else {
                 components.push(result.value);
             }
-        } 
-        else {
-            log.error(result.reason);
         }
     });
-
     entity.add_components(...components);
     return entity;
 }

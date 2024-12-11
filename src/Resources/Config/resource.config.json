@@ -6,6 +6,11 @@
             "file_path": "/src/Resources/scene/main.json"
         },
         {
+            "uuid": "1efb8133-1808-6390-b69b-79e991f8fba5",
+            "type": "scene",
+            "file_path": "/src/Resources/scene/debug.json"
+        },
+        {
             "uuid": "1efb71b9-2d64-6290-966b-64cc6c6c9778",
             "type": "component",
             "file_path": "/src/Engine/Scripts/BoxMesh.tsx"
