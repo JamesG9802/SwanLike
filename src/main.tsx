@@ -59,7 +59,7 @@ const lightTheme = createTheme({
   palette: { mode: 'light' }
 });
 
-function Main() {
+export default function Main() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const theme = prefersDarkMode ? darkTheme : lightTheme;
 

@@ -14,7 +14,7 @@ describe("EventHandler.attach", () => {
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         let output: number = 0;
-        const callback: Listener<TestClass, void> = (sender, _) => { 
+        const callback: Listener<TestClass, void> = (sender) => { 
             output = sender.field_1;
         };
 
@@ -42,7 +42,7 @@ describe("EventHandler.attach", () => {
         const test: TestClass = { field_1: 1};
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
-        const callback: Listener<TestClass, void> = (_, __) => { };
+        const callback: Listener<TestClass, void> = () => { };
     
         expect(on_test.attach(callback)).toBe(true);
         expect(on_test.attach(callback)).toBe(false);
@@ -55,7 +55,7 @@ describe("EventHandler.detach", () => {
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         let output: number = 0;
-        const callback: Listener<TestClass, void> = (sender, __) => { output = sender.field_1 };
+        const callback: Listener<TestClass, void> = (sender) => { output = sender.field_1 };
 
         expect(on_test.attach(callback)).toBe(true);
         expect(on_test.detach(callback)).toBe(true);
@@ -68,8 +68,8 @@ describe("EventHandler.detach", () => {
         const on_test: EventHandler<TestClass, void> = new EventHandler(test);
 
         let output: number = 0;
-        const callback_1: Listener<TestClass, void> = (_, __) => { output += 1 };
-        const callback_2: Listener<TestClass, void> = (_, __) => { output += 2 };
+        const callback_1: Listener<TestClass, void> = () => { output += 1 };
+        const callback_2: Listener<TestClass, void> = () => { output += 2 };
 
         expect(on_test.attach(callback_1)).toBe(true);
         expect(on_test.attach(callback_2)).toBe(true);

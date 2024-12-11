@@ -5,8 +5,7 @@ import Component from "../World/Component";
  * Component to add a BoxMesh to an object.
  */
 export default class BoxMesh extends Component {
-    initialize(_: number): void {
-    }
+    initialize(): void {}
 
     dispose(): void {}
 
