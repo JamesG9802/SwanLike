@@ -2,21 +2,11 @@ import log from "loglevel";
 
 import { Listener } from "Utility/EventHandler";
 import { useEffect, useRef, useState } from "react";
-import { Entity, EntityConfig, parse_entities_from_config } from "Three/World/Entity";
+import { Entity, parse_entities_from_config } from "Engine/World/Entity";
 import { RootState, useFrame, useThree } from "@react-three/fiber";
-import { _XRFrame } from "@react-three/fiber/dist/declarations/src/core/utils";
-import { useWorldManager, WorldManager } from "Three/Managers/WorldManager";
-import { ResourceManager } from "Three/Managers/ResourceManager";
-
-/**
- * The format of World config JSONs.
- */
-export type WorldConfig = {
-    /**
-     * All the entities in the world.
-     */
-    entities: EntityConfig[]
-}
+import { useWorldManager, WorldManager } from "Engine/Managers/WorldManager";
+import { ResourceManager } from "Engine/Managers/ResourceManager";
+import { WorldConfig } from "Engine/Config/WorldConfig";
 
 /**
  * The props for the Three React component of a world.
@@ -49,12 +39,12 @@ export function ThreeWorld({ entities }: ThreeWorldProps): JSX.Element {
         return () => {
             scene.remove(...entities_ref.current);
         }
-    }, []);
+    });
 
     useFrame(Update);
 
     //  Every animation frame, the Update function is called.
-    function Update(_state: RootState, delta: number, _frame: _XRFrame) {
+    function Update(_state: RootState, delta: number) {
         for(let i = 0; i < entities_ref.current.length; i++) {
             entities_ref.current[i].update(delta);
         }
@@ -108,14 +98,14 @@ export function useWorld(): React.ReactNode | undefined {
 export async function parse_world_from_config(world_config: WorldConfig, 
     resource_manager: ResourceManager, world_manager: WorldManager): Promise<JSX.Element> 
 {
-    let entities: Entity[] = [];
-    let promises: Promise<Entity>[] = []; 
+    const entities: Entity[] = [];
+    const promises: Promise<Entity>[] = []; 
 
     for(let i = 0; i < world_config.entities.length; i++) {
         promises.push(parse_entities_from_config(world_config.entities[i], resource_manager, world_manager));
     }
 
-    let results = await Promise.allSettled(promises);
+    const results = await Promise.allSettled(promises);
     
     //  Add all successfully loaded entities.
     results.forEach((result) => {

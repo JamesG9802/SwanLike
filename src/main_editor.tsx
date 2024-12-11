@@ -10,7 +10,7 @@ const root_element = document.getElementById("root");
  * Entry point for the SwanLike Editor.
  * @returns 
  */
-function Main() {
+export default function MainEditor() {
   return (
     <>
       <Editor/>
@@ -20,6 +20,6 @@ function Main() {
 
 ReactDOM.createRoot(root_element!).render(
   <StrictMode>
-    <Main/>
+    <MainEditor/>
   </StrictMode>,
 );

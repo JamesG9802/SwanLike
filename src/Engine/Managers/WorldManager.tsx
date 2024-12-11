@@ -2,9 +2,9 @@ import log from "loglevel";
 
 import EventHandler from "Utility/EventHandler";
 import { createContext, useContext} from "react";
-import { _XRFrame } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { ResourceManager } from "./ResourceManager";
-import { parse_world_from_config, WorldConfig } from "Three/World";
+import { parse_world_from_config } from "Engine/World";
+import { WorldConfig } from "Engine/Config/WorldConfig";
 
 /**
  * A manager of all possible scenes and controls the current scene of the application.
@@ -47,12 +47,13 @@ export class WorldManager {
      */
     async change_scene(scene_uuid: string): Promise<boolean> {
         log.info(`Changing scene to ${scene_uuid}.`);
-        let world_config = await this.resource_manager_ref.load<WorldConfig>(scene_uuid);
+        const world_config = await this.resource_manager_ref.load<WorldConfig>(scene_uuid);
 
         if(world_config == undefined) {
             log.error(`Failed to load world config ${scene_uuid}`);
             return false;
         }
+        
         this.world = await parse_world_from_config(world_config, this.resource_manager_ref, this);
         this.on_scene_change.notify();
 

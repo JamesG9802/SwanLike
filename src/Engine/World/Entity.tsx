@@ -2,39 +2,10 @@ import log from "loglevel";
 
 import * as THREE from 'three';
 
-import Component, { ComponentConfig, parse_components_from_config } from "./Component"
+import Component, { parse_components_from_config } from "./Component"
 import { ResourceManager } from '../Managers/ResourceManager';
 import { WorldManager } from "../Managers/WorldManager";
-
-/**
- * The format of Entity Config JSONs.
- */
-export type EntityConfig = {
-    /**
-     * Any components the entity has.
-     */
-    components: ComponentConfig[],
-    
-    /**
-     * The name of the entity.
-     */
-    name: string,
-
-    /**
-     * The initial position of the entity.
-     */
-    position: [number, number, number],
-
-    /**
-     * The initial rotation of the entity.
-     */
-    rotation: [number, number, number],
-
-    /**
-     * The initial scale of the entity.
-     */
-    scale: [number, number, number],
-}
+import { EntityConfig } from "Engine/Config/EntityConfig";
 
 /**
  * An entity is a basic Object3D with support for component scripts.
@@ -114,16 +85,16 @@ export class Entity extends THREE.Object3D {
 export async function parse_entities_from_config(entity_config: EntityConfig, 
     resource_manager: ResourceManager, world_manager: WorldManager
 ): Promise<Entity> {
-    let entity = new Entity(entity_config.name);
+    const entity = new Entity(entity_config.name);
 
-    let components: Component[] = [];
-    let promises: Promise<Component | undefined>[] = [];
+    const components: Component[] = [];
+    const promises: Promise<Component | undefined>[] = [];
 
     for(let i = 0; i < entity_config.components.length; i++) {
         promises.push(parse_components_from_config(entity_config.components[i], entity, resource_manager, world_manager));
     }
 
-    let results = await Promise.allSettled(promises);
+    const results = await Promise.allSettled(promises);
     
     results.forEach((result) => {
         if (result.status === 'fulfilled') {
