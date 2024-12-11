@@ -5,7 +5,7 @@ import { useWorld } from 'Engine/World'
 
 import app_config_resource from "resources/config/application.config.json";
 import file_config_resource from "resources/config/resource.config.json";
-import { WorldManager, WorldManagerProvider } from 'Engine/Managers/WorldManager';
+import { useWorldManager, WorldManager, WorldManagerProvider } from 'Engine/Managers/WorldManager';
 import { ResourceManager } from 'Engine/Managers/ResourceManager';
 import { ApplicationConfig } from 'Engine/Config/AppConfig';
 import { FileConfig } from 'Engine/Config/FileResourceConfig';
@@ -18,6 +18,12 @@ function Scene() {
   const world = useWorld();
 
   return world;
+}
+
+function Test() {
+  const worldManager = useWorldManager();
+
+  return <button onClick={() => { worldManager?.change_scene("1efb8133-1808-6390-b69b-79e991f8fba5") }}>Debug scene</button>
 }
 
 /**
@@ -49,16 +55,17 @@ function App() {
   return (
     <>
       {
-        world_manager ? 
-        <WorldManagerProvider manager={world_manager}>
-          <Canvas>
-            <Scene/>
-          </Canvas>
-        </WorldManagerProvider> 
-        :
-        <div>
-          Loading...
-        </div>
+        world_manager ?
+          <WorldManagerProvider manager={world_manager}>
+            <Canvas>
+              <Scene />
+            </Canvas>
+            <Test />
+          </WorldManagerProvider>
+          :
+          <div>
+            Loading...
+          </div>
       }
     </>
   )

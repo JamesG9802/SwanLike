@@ -31,7 +31,7 @@ export default class EventHandler<TSender, TArgs> {
      * @returns True if the listener was successfully added.
      */
     attach(listener: Listener<TSender, TArgs>): boolean {
-        if(!this.listeners.includes(listener)) {
+        if (!this.listeners.includes(listener)) {
             this.listeners.push(listener);
             return true;
         }

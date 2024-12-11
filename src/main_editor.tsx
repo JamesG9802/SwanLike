@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client'
 
-import { StrictMode} from 'react';
+import { StrictMode } from 'react';
 import { Editor } from 'Editor';
 import "index.css";
 
@@ -13,13 +13,13 @@ const root_element = document.getElementById("root");
 export default function MainEditor() {
   return (
     <>
-      <Editor/>
+      <Editor />
     </>
   );
 }
 
 ReactDOM.createRoot(root_element!).render(
   <StrictMode>
-    <MainEditor/>
+    <MainEditor />
   </StrictMode>,
 );

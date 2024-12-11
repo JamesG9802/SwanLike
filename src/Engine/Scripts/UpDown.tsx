@@ -1,5 +1,3 @@
-import log from "loglevel";
-
 import Component from "../World/Component";
 
 /**
@@ -7,22 +5,18 @@ import Component from "../World/Component";
  */
 export default class UpDown extends Component {
     time: number = 0;
-
-    initialize(): void {
-        log.info("Updown init");
+    speed: number = 1;
+    initialize(data?: number): void {
+        if (data != undefined) {
+            this.speed = data;
+        }
     }
-    dispose(): void {
-    }
+    dispose(): void { }
 
-
-
-    start(): void {
-        log.info("Updown start");
-        this.time = 0;
-    }
+    start(): void { this.time = 0; }
 
     update(delta: number): void {
-        this.game_object.position.y = Math.sin(this.time);
+        this.game_object.position.y = Math.sin(this.speed * this.time);
         this.time += delta;
     }
 }

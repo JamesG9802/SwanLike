@@ -32,7 +32,7 @@ export class ResourceManager {
      */
     private resources: Map<string, Resource>;
 
-    constructor() { 
+    constructor() {
         this.resources = new Map<string, Resource>();
     }
 
@@ -44,18 +44,18 @@ export class ResourceManager {
         //  🥲 Vite can't handle dynamic local file paths.
 
         const scenes = await import.meta.glob("/src/Resources/scene/*.json");
-        const scripts= await import.meta.glob("/src/Engine/Scripts/*.tsx");
+        const scripts = await import.meta.glob("/src/Engine/Scripts/*.tsx");
 
         const path_to_loader: Map<string, () => Promise<unknown>> = new Map<string, () => Promise<unknown>>();
 
-        for(const path in scenes) {
+        for (const path in scenes) {
             path_to_loader.set(path.toLowerCase(), scenes[path]);
         }
-        for(const path in scripts) {
+        for (const path in scripts) {
             path_to_loader.set(path.toLowerCase(), scripts[path]);
         }
-        
-        for(let i = 0; i < file_config.files.length; i++) {
+
+        for (let i = 0; i < file_config.files.length; i++) {
             this.resources.set(file_config.files[i].uuid, {
                 loaded: false,
                 type: file_config.files[i].type,
@@ -86,17 +86,17 @@ export class ResourceManager {
      * @returns a Promise containing the object or undefined if the operation failed.
      */
     async load<TObject>(uuid: string): Promise<TObject | undefined> {
-        if(!this.resources.has(uuid)) {
-            const error_message: string = `Couldn't load ${uuid}`;
+        if (!this.resources.has(uuid)) {
+            const error_message: string = `Couldn't load resource: (${uuid})`;
             log.error(error_message);
             return;
         }
 
-        if(!this.resources.get(uuid)!.loaded) {
+        if (!this.resources.get(uuid)!.loaded) {
             try {
                 this.resources.get(uuid)!.data = await this.resources.get(uuid)!.data();
                 this.resources.get(uuid)!.loaded = true;
-                
+
             }
             catch (error) {
                 log.error(error);
