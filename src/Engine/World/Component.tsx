@@ -31,7 +31,7 @@ export default abstract class Component {
     world_manager_ref: WorldManager;
 
     /* eslint-disable  @typescript-eslint/no-explicit-any */
-    constructor(data: any, active: boolean, game_object: Object3D, 
+    constructor(active: boolean, game_object: Object3D,
         resource_manager_ref: ResourceManager, world_manager_ref: WorldManager
     ) {
         this.active = active;
@@ -39,8 +39,6 @@ export default abstract class Component {
 
         this.resource_manager_ref = resource_manager_ref;
         this.world_manager_ref = world_manager_ref;
-
-        this.initialize(data);
     }
 
     /**
@@ -74,25 +72,25 @@ export default abstract class Component {
  * @param world_manager the world manager.
  * @returns 
  */
-export async function parse_components_from_config(component_config: ComponentConfig, 
+export async function parse_components_from_config(component_config: ComponentConfig,
     entity: Entity,
-    resource_manager: ResourceManager, world_manager: WorldManager): Promise<Component | undefined> 
-{
+    resource_manager: ResourceManager, world_manager: WorldManager): Promise<Component | undefined> {
     //  The constructor matches `Component`'s constructor.
     type ComponentConstructor = new (...args: ConstructorParameters<typeof Component>) => Component;
 
     const component_module: { default: ComponentConstructor } | undefined = await resource_manager.load(component_config.uuid);
 
-    if(component_module == undefined) {
+    if (component_module == undefined) {
         log.error("Couldn't instantiate the component");
         return undefined;
     }
 
-    return new component_module.default(
-        component_config.data,
+    const component = new component_module.default(
         component_config.active,
         entity,
         resource_manager,
         world_manager
     );
+    component.initialize(component_config.data);
+    return component;
 }

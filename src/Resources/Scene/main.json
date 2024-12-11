@@ -4,21 +4,17 @@
             "components": [
                 {
                     "uuid": "1efb71b9-2d64-6290-966b-64cc6c6c9778",
-                    "active": true,
-                    "data": {
-                    }
+                    "active": true
                 },
                 {
                     "uuid": "1efb73dc-a4a4-6dd0-afc1-84a58ed78a9f",
-                    "active": true,
-                    "data": {
-                    }
+                    "active": true
                 }
             ],
             "name": "Entity 1",
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
-            "scale":    [0, 0, 0]
+            "scale":    [1, 1, 1]
         }
     ]
 }

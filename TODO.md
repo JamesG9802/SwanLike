@@ -1,18 +1,15 @@
-# PhysicsChess
- A physics-based variant of chess.
-
 # To-do
 - Features
     - WorldManager
 		- ✅Scene loading
-		- ❌Changing Scene (doesn't call dispose)
+		- ✅Changing Scene
     - ResourceManager
 		- ✅Loading resource
 		- ❌Unloading resource
 		- ❌Auto-unload resource based on reference counter
 	- World
-		- ❌Adding Entities (no way for components to access entity list)
-		- ❌Removing Entities (doesn't call dispose)
+		- ✅Adding Entities
+		- ✅Removing Entities
 	- Entity
 		- ❌Adding Components (Doesn't invoke start)
 		- ❌Removing Components (Doesn't call dispose)
@@ -25,10 +22,10 @@
 		- ❌Folder structure viewer
 		- ❌JSON generator for (scenes, entities, components)
 - Tests
-    - WorldManager
-    - ResourceManager
-    - World
-    - Entity
-    - Component
-    - Editor (or not really that important)
+    - ✅WorldManager
+    - ✅ResourceManager
+    - ✅World
+    - ✅Entity
+    - ✅Component
+    - ❔Editor (or not really that important)
 			
