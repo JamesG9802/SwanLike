@@ -11,6 +11,11 @@ import { ComponentConfig } from "Engine/Config/ComponentConfig";
  */
 export default abstract class Component {
     /**
+     * The name of the component.
+     */
+    name: string;
+
+    /**
      * Whether or not the component is active or not.
      */
     active: boolean;
@@ -30,16 +35,31 @@ export default abstract class Component {
      */
     world_manager_ref: WorldManager;
 
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /**
+     * Creates a new component.
+     * @param name the name of the component for querying.
+     * @param active whether the component is active or not.
+     * @param game_object the entity the component is attached to.
+     * @param resource_manager_ref a reference to the resource manager.
+     * @param world_manager_ref a reference to the world manager.
+     */
     constructor(active: boolean, game_object: Object3D,
         resource_manager_ref: ResourceManager, world_manager_ref: WorldManager
     ) {
+        //  We can't add the name to the constructor because components 
+        //  only know their name after being created 😔.
+        this.name = this.get_name();
         this.active = active;
         this.game_object = game_object;
 
         this.resource_manager_ref = resource_manager_ref;
         this.world_manager_ref = world_manager_ref;
     }
+
+    /**
+     * Gets the component's name.
+     */
+    protected abstract get_name(): string;
 
     /**
      * Initialize the component with the data needed to properly handle starting up.

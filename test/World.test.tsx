@@ -42,6 +42,7 @@ describe("ThreeWorld", () => {
         let invoke_order: string = "";
         class TestComponent extends Component {
             time: number = 0;
+            protected get_name(): string { invoke_order += "0"; return "TestComponent"; }
             initialize(): void { invoke_order += "1"; }
             start(): void { invoke_order += "2"; }
             update(delta: number): void {
@@ -75,7 +76,7 @@ describe("ThreeWorld", () => {
         expect(start_spy).toHaveBeenCalled();
         expect(update_spy).toHaveBeenCalled();
         expect(dispose_spy).toHaveBeenCalled();
-        expect(invoke_order).toBe("1234");
+        expect(invoke_order).toBe("01234");
     });
 
     it("should call support adding entities", async () => {
@@ -84,6 +85,7 @@ describe("ThreeWorld", () => {
 
         class TestComponent extends Component {
             operation_executed: boolean = false;
+            protected get_name(): string { return "TestComponent"; }
             initialize(): void { }
             start(): void { }
             update(): void {
@@ -120,6 +122,7 @@ describe("ThreeWorld", () => {
         class TestComponent extends Component {
             operation_executed: boolean = false;
             target: string = "";
+            protected get_name(): string { return "TestComponent"; }
             initialize(target: string): void { this.target = target; }
             start(): void { }
             update(): void {

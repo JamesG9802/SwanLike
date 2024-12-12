@@ -5,6 +5,12 @@ import Component from "../World/Component";
  * Component to add a BoxMesh to an object.
  */
 export default class BoxMesh extends Component {
+    static name: string = "BoxMesh";
+
+    protected get_name(): string {
+        return BoxMesh.name;
+    }
+
     initialize(): void { }
 
     dispose(): void { }
