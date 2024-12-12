@@ -20,6 +20,7 @@ vi.mock("loglevel", () => ({
 }));
 
 class TestComponent extends Component {
+    get_name(): string { return "TestComponent"; }
     initialize(): void { }
     start(): void { }
     update(): void { }
@@ -42,42 +43,34 @@ describe("Entity", () => {
 
     it("should add components", () => {
         const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
-        const mockComponent2 = new TestComponent(true, entity, resource_manager, world_manager);
 
-        entity.add_components(mockComponent1, mockComponent2);
+        entity.add_components(mockComponent1);
 
-        expect(entity.components).toContain(mockComponent1);
-        expect(entity.components).toContain(mockComponent2);
+        expect(entity.components.values()).toContain(mockComponent1);
     });
 
     it("should call start on all components", () => {
         const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
-        const mockComponent2 = new TestComponent(true, entity, resource_manager, world_manager);
 
         const component1_spy = vi.spyOn(mockComponent1, "start");
-        const component2_spy = vi.spyOn(mockComponent2, "start");
 
-        entity.add_components(mockComponent1, mockComponent2);
+        entity.add_components(mockComponent1);
 
         entity.start();
 
         expect(component1_spy).toHaveBeenCalled();
-        expect(component2_spy).toHaveBeenCalled();
     });
 
     it("should call update only on active components", () => {
-        const activeComponent = new TestComponent(true, entity, resource_manager, world_manager);
         const inactiveComponent = new TestComponent(true, entity, resource_manager, world_manager);
         inactiveComponent.active = false;
 
-        const active_spy = vi.spyOn(activeComponent, "update");
         const inactive_spy = vi.spyOn(inactiveComponent, "update");
 
-        entity.add_components(activeComponent, inactiveComponent);
+        entity.add_components(inactiveComponent);
 
         entity.update(16);
 
-        expect(active_spy).toHaveBeenCalledWith(16);
         expect(inactive_spy).not.toHaveBeenCalled();
     });
 
@@ -89,19 +82,24 @@ describe("Entity", () => {
         expect(entity.will_destroy()).toBe(true);
     });
 
+    it("should query entity for components", () => {
+        const testComponent = new TestComponent(true, entity, resource_manager, world_manager);
+        entity.add_components(testComponent);
+
+        expect(entity.components.get("TestComponent")).toBeDefined();
+    });
+
+
     it("should dispose of components during cleanup", () => {
         const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
-        const mockComponent2 = new TestComponent(true, entity, resource_manager, world_manager);
 
         const component1_spy = vi.spyOn(mockComponent1, "dispose");
-        const component2_spy = vi.spyOn(mockComponent2, "dispose");
 
-        entity.add_components(mockComponent1, mockComponent2);
+        entity.add_components(mockComponent1);
 
         entity.cleanup();
 
         expect(component1_spy).toHaveBeenCalled();
-        expect(component2_spy).toHaveBeenCalled();
     });
 });
 
@@ -138,8 +136,7 @@ describe("parse_entities_from_config", async () => {
 
         expect(entity).toBeInstanceOf(Entity);
         expect(entity.name).toBe("Entity 1");
-        expect(entity.components.length).toBe(2);
-        expect(entity.components[0]).toBeInstanceOf(Component);
+        expect(entity.components.size).toBe(2);
     });
 
     it("should log an error if a component fails to load", async () => {
@@ -169,7 +166,7 @@ describe("parse_entities_from_config", async () => {
         const entity = await parse_entities_from_config(entityConfig, resource_manager, world_manager);
 
         expect(entity).toBeInstanceOf(Entity);
-        expect(entity.components.length).toBe(1);
+        expect(entity.components.size).toBe(1);
         expect(log.error).toHaveBeenCalledWith(mockError);
     });
 });

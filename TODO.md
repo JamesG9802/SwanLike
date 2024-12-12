@@ -13,7 +13,7 @@
 	- Entity
 		- ❌Adding Components (Doesn't invoke start)
 		- ❌Removing Components (Doesn't call dispose)
-		- ❌Querying Components (Components are just an array and no way to identify them yet)
+		- ✅Querying Components (Components are just an array and no way to identify them yet)
 	- Component
 		- ✅Disabling/Enabling Components
 	- Editor
