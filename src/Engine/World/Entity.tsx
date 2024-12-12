@@ -14,12 +14,12 @@ export class Entity extends THREE.Object3D {
     /**
      * The components the entity has.
      */
-    components: Component[] = [];
+    components: Map<string, Component>;
 
     /**
      * Whether the entity is going to be destroyed.
      */
-    private _death_flag: boolean = false;
+    private _death_flag: boolean;
 
     /**
      * Create an Entity with a name.
@@ -28,6 +28,9 @@ export class Entity extends THREE.Object3D {
     constructor(name: string = "") {
         super();
         this.name = name;
+
+        this.components = new Map<string, Component>();
+        this._death_flag = false;
     }
 
     /**
@@ -35,16 +38,18 @@ export class Entity extends THREE.Object3D {
      * @param components 
      */
     add_components(...components: Component[]) {
-        this.components = [...this.components, ...components];
+        for (let i = 0; i < components.length; i++) {
+            this.components.set(components[i].name, components[i]);
+        }
     }
 
     /**
      * Invoke all components that need to start.
      */
     start() {
-        for (let i = 0; i < this.components.length; i++) {
-            this.components[i].start();
-        }
+        this.components.forEach((component) => {
+            component.start();
+        });
     }
 
     /**
@@ -52,11 +57,11 @@ export class Entity extends THREE.Object3D {
      * @param delta - the time since the last frame
      */
     update(delta: number) {
-        for (let i = 0; i < this.components.length; i++) {
-            if (this.components[i].active) {
-                this.components[i].update(delta);
+        this.components.forEach((component) => {
+            if (component.active) {
+                component.update(delta);
             }
-        }
+        });
     }
 
     /**
@@ -75,9 +80,9 @@ export class Entity extends THREE.Object3D {
     }
 
     cleanup() {
-        for (let i = 0; i < this.components.length; i++) {
-            this.components[i].dispose();
-        }
+        this.components.forEach((component) => {
+            component.dispose();
+        });
     }
 }
 
