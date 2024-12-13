@@ -1,4 +1,4 @@
-import Identifiable from "Utility/Identifiable.d";
+import Identifiable from "Utility/Identifiable";
 
 /**
  * The types of resources.
