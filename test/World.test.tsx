@@ -10,8 +10,8 @@ import { WorldManager, WorldManagerProvider } from "Engine/Managers/WorldManager
 
 import log from "loglevel";
 
-import app_config_resource from "resources/config/application.config.json";
-import file_config_resource from "resources/config/resource.config.json";
+import app_config_resource from "Resources/config/application.config.json";
+import file_config_resource from "Resources/config/resource.config.json";
 import { FileConfig } from "Engine/Config/FileResourceConfig";
 import { ApplicationConfig } from "Engine/Config/AppConfig";
 import { renderHook } from "@testing-library/react";
