@@ -93,7 +93,7 @@ export class Entity extends THREE.Object3D {
         const dictionary: Map<string, Component> = new Map();
         const iterator = this.get_components_iter();
 
-        for(const [key, value] of iterator) {
+        for (const [key, value] of iterator) {
             dictionary.set(key, value);
         }
         return dictionary;
@@ -104,9 +104,9 @@ export class Entity extends THREE.Object3D {
      * @param components 
      */
     add_components(...components: Component[]) {
-        for(let i = 0; i < components.length; i++) {
+        for (let i = 0; i < components.length; i++) {
             //  Component exists
-            if(this.components.has(components[i].name) || this.future_components.has(components[i].name)) {
+            if (this.components.has(components[i].name) || this.future_components.has(components[i].name)) {
                 log.warn(`Entity ${this.name} already has ${components[i].name}.`);
             }
             else {
@@ -120,7 +120,7 @@ export class Entity extends THREE.Object3D {
      * @param component_names the names of the component.   
      */
     remove_components(...component_names: string[]) {
-        for(let i = 0; i < component_names.length; i++) {
+        for (let i = 0; i < component_names.length; i++) {
             this.future_components.get(component_names[i])?.destroy();
             this.components.get(component_names[i])?.destroy();
         }
@@ -143,7 +143,7 @@ export class Entity extends THREE.Object3D {
      */
     update(delta: number) {
         this.future_components.forEach((component, name) => {
-            if(component.will_destroy()) {
+            if (component.will_destroy()) {
                 return;
             }
             component.start();
@@ -159,7 +159,7 @@ export class Entity extends THREE.Object3D {
 
         this.cleanup();
     }
-    
+
     /**
      * Remove all components that are marked for destruction.
      */
