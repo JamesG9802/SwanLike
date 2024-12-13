@@ -21,6 +21,6 @@ export default defineConfig({
             input: ['index.html', 'editor.html']
         }
     },
-    base: "/",
+    base: "/SwanLike",
     // assetsInclude: "**/*.json"
 });
