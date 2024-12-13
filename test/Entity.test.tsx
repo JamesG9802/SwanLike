@@ -7,8 +7,8 @@ import Component from "Engine/World/Component";
 import { ResourceManager } from "Engine/Managers/ResourceManager";
 import { WorldManager } from "Engine/Managers/WorldManager";
 
-import app_config_resource from "Resources/config/application.config.json";
-import file_config_resource from "Resources/config/resource.config.json";
+import app_config_resource from "Resources/Config/application.config.json";
+import file_config_resource from "Resources/Config/resource.config.json";
 import { FileConfig } from "Engine/Config/FileResourceConfig";
 import { ApplicationConfig } from "Engine/Config/AppConfig";
 
