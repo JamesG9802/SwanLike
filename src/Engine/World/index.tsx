@@ -54,7 +54,7 @@ export class World {
      */
     link_scene(scene: Scene) {
         this.scene = scene;
-    } 
+    }
 
     /**
      * Starts the world by initializing all entities.
@@ -106,9 +106,9 @@ export class World {
      */
     add_entities(...entities: Entity[]) {
         this.entities = [...this.entities, ...entities];
-        
-        if(this.scene != undefined) {
-            for(let i = 0; i < entities.length; i++) {
+
+        if (this.scene != undefined) {
+            for (let i = 0; i < entities.length; i++) {
                 this.scene.add(entities[i]);
             }
         }
