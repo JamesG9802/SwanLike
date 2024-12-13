@@ -28,3 +28,6 @@ dist-ssr
 
 # Build files
 *.tsbuildinfo
+
+# Documentation files
+/docs
