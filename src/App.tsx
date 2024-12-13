@@ -3,8 +3,8 @@ import { Canvas } from '@react-three/fiber'
 import { useEffect, useState } from 'react';
 import { useWorld } from 'Engine/World'
 
-import app_config_resource from "resources/config/application.config.json";
-import file_config_resource from "resources/config/resource.config.json";
+import app_config_resource from "Resources/config/application.config.json";
+import file_config_resource from "Resources/config/resource.config.json";
 import { useWorldManager, WorldManager, WorldManagerProvider } from 'Engine/Managers/WorldManager';
 import { ResourceManager } from 'Engine/Managers/ResourceManager';
 import { ApplicationConfig } from 'Engine/Config/AppConfig';
