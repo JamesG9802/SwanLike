@@ -43,7 +43,7 @@ export class ResourceManager {
     async initialize(file_config: FileConfig) {
         //  🥲 Vite can't handle dynamic local file paths.
 
-        const scenes = await import.meta.glob("/src/Resources/scene/*.json");
+        const scenes = await import.meta.glob("/src/Resources/Scene/*.json");
         const scripts = await import.meta.glob("/src/Engine/Scripts/*.tsx");
 
         const path_to_loader: Map<string, () => Promise<unknown>> = new Map<string, () => Promise<unknown>>();
