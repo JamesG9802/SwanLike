@@ -9,54 +9,116 @@ import { ResourceManager } from "Engine/Managers/ResourceManager";
 import { WorldConfig } from "Engine/Config/WorldConfig";
 import { Scene } from "three";
 
+/**
+ * The logical representation of a scene containing entities.
+ * 
+ * # World
+ * Based on Scenes from Unity, worlds enforce several invariants on their state.
+ * 
+ * ## Entity update order
+ * Only entities at the start of the frame will update. If any entities are added, such as through:
+ * `world.add_entities(entity)`
+ * 
+ * @see {@link add_entities}
+ * 
+ * that entity is guaranteed to only update in the next update invocation.
+ * 
+ * ## Entity list modification
+ * Additions to the entity list are visible immediately.
+ * Deletions to the entity list are processed at the end of the update frame, so they can still be referenced without worry.
+ * 
+ * @see {@link update}
+ */
 export class World {
-
-    private future_entities: Entity[];
+    /**
+     * The entities of the world.
+     */
     private entities: Entity[];
 
+    /**
+     * The Three.JS scene container that will be rendered to a JSX.component.
+     */
+    private scene?: Scene;
+
+    /**
+     * Creates a world based on entities.
+     * @param entities
+     */
     constructor(entities: Entity[]) {
-        this.future_entities = [];
         this.entities = entities;
     }
 
+    /**
+     * Adds the Three.js scene to the world.
+     * @param scene
+     */
+    link_scene(scene: Scene) {
+        this.scene = scene;
+    } 
+
+    /**
+     * Starts the world by initializing all entities.
+     */
     start() {
         for (let i = 0; i < this.entities.length; i++) {
             this.entities[i].start();
         }
     }
-    update(scene: Scene, _state: RootState, delta: number) {
-        for (; this.future_entities.length > 0; this.future_entities.splice(0, 1)) {
-            scene.add(this.future_entities[0]);
-            this.entities.push(this.future_entities[0]);
-        }
 
-        for (let i = 0; i < this.entities.length; i++) {
-            this.entities[i].update(delta);
-        }
+    /**
+     * Runs an iteration of the update cycle over all entities.
+     * @param _state 
+     * @param delta 
+     */
+    update(_state: RootState, delta: number) {
+        this.entities.forEach((entity) => {
+            entity.update(delta);
+        });
 
-        this.cleanup(scene);
+        this.cleanup();
     }
 
-    protected cleanup(scene: Scene) {
-        //  Any entities marked for destruction will be removed.
+    /**
+     * After updates, cleanup any entities marked for destruction.
+     */
+    protected cleanup() {
         for (let i = 0; i < this.entities.length; i++) {
             if (this.entities[i].will_destroy()) {
-                this.entities[i].cleanup();
-                scene.remove(this.entities[i]);
+                this.entities[i].dispose();
+                this.scene?.remove(this.entities[i]);
                 this.entities.splice(i, 1);
                 i -= 1;
             }
         }
     }
 
-    get_entities(): Entity[] {
+    /**
+     * Returns a list of all entities.
+     * @returns 
+     */
+    get_entities(): readonly Entity[] {
         return this.entities;
     }
 
+    /**
+     * Add entities to the world.
+     * @param entities 
+     */
     add_entities(...entities: Entity[]) {
-        this.future_entities = [...this.future_entities, ...entities];
+        this.entities = [...this.entities, ...entities];
+        
+        if(this.scene != undefined) {
+            for(let i = 0; i < entities.length; i++) {
+                this.scene.add(entities[i]);
+            }
+        }
     }
 
+    /**
+     * Return a list of entities by name.
+     * @param name 
+     * @returns 
+     */
     find_by_name(name: string): Entity[] {
         return this.entities.filter((entity) => {
             return entity.name == name;
@@ -86,6 +148,7 @@ export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
     //  The entities' scripts' Start function are all invoked.
     useEffect(() => {
         world_ref.current = world;
+        world_ref.current.link_scene(scene);
         scene.add(...world_ref.current.get_entities());
         world_ref.current.start();
 
@@ -94,7 +157,7 @@ export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
 
             //  explicitly call cleanup on entities
             for (let i = 0; i < world_ref.current!.get_entities().length; i++) {
-                world_ref.current!.get_entities()[i].cleanup();
+                world_ref.current!.get_entities()[i].dispose();
             }
             log.info("Cleaning up scene.");
         }
@@ -103,7 +166,7 @@ export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
     //  Every animation frame, the Update function is called.
     useFrame((_state, delta) => {
         if (world_ref.current != undefined) {
-            world_ref.current.update(scene, _state, delta);
+            world_ref.current.update(_state, delta);
         }
     });
 

@@ -16,6 +16,7 @@ vi.mock("loglevel", () => ({
     default: {
         info: vi.fn(),
         error: vi.fn(),
+        warn: vi.fn()
     },
 }));
 
@@ -41,12 +42,36 @@ describe("Entity", () => {
         expect(entity.name).toBe("TestEntity");
     });
 
-    it("should add components", () => {
+    it("should add components to future", () => {
+        entity.start();
         const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
-
+        const start_spy = vi.spyOn(mockComponent1, "start");
         entity.add_components(mockComponent1);
+        expect(entity.get_components().get("TestComponent")).toBe(mockComponent1);
+        expect(start_spy).not.toHaveBeenCalled();
+    });
 
-        expect(entity.components.values()).toContain(mockComponent1);
+    it("should add components to current", () => {
+        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
+        const start_spy = vi.spyOn(mockComponent1, "start");
+        const update_spy = vi.spyOn(mockComponent1, "update");
+        entity.add_components(mockComponent1);
+        entity.start();
+        entity.update(1);
+        expect(entity.get_components().get("TestComponent")).toBe(mockComponent1);
+        expect(start_spy).toHaveBeenCalled();
+        expect(update_spy).toHaveBeenCalled();
+    });
+
+    it("should not add duplicate components ", () => {
+        const component_1 = new TestComponent(true, entity, resource_manager, world_manager);
+        const component_2 = new TestComponent(false, entity, resource_manager, world_manager);
+        entity.add_components(component_1, component_2);
+
+        expect(log.warn).toHaveBeenCalledWith(`Entity ${entity.name} already has ${component_1.name}.`);
+
+        expect(entity.get_components().get("TestComponent")).toBe(component_1);
+        expect(entity.get_components().size).toBe(1);
     });
 
     it("should call start on all components", () => {
@@ -86,9 +111,8 @@ describe("Entity", () => {
         const testComponent = new TestComponent(true, entity, resource_manager, world_manager);
         entity.add_components(testComponent);
 
-        expect(entity.components.get("TestComponent")).toBeDefined();
+        expect(entity.get_components().get("TestComponent")).toBeDefined();
     });
-
 
     it("should dispose of components during cleanup", () => {
         const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
@@ -97,9 +121,59 @@ describe("Entity", () => {
 
         entity.add_components(mockComponent1);
 
-        entity.cleanup();
+        entity.dispose();
 
         expect(component1_spy).toHaveBeenCalled();
+    });
+    
+    it("should dispose of components that are marked for destruction", () => {
+        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
+
+        const component1_spy = vi.spyOn(mockComponent1, "dispose");
+
+        entity.add_components(mockComponent1);
+        
+        mockComponent1.destroy();
+
+        entity.update(16);
+        entity.dispose();
+
+        expect(component1_spy).toHaveBeenCalled();
+    });
+
+    it("should remove components by marking them for destruction", () => {
+        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
+
+        const component1_spy = vi.spyOn(mockComponent1, "destroy");
+
+        entity.add_components(mockComponent1);
+
+        entity.start();
+        
+        entity.remove_components(mockComponent1.name);
+
+        entity.update(0);
+
+        expect(component1_spy).toHaveBeenCalled();
+    });
+
+    
+    it("should not update newly added components when marked for destruction", () => {
+        entity.start();
+
+        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager);
+
+        const start_spy = vi.spyOn(mockComponent1, "start");
+        const destroy_spy = vi.spyOn(mockComponent1, "destroy");
+
+        entity.add_components(mockComponent1);
+        
+        entity.remove_components(mockComponent1.name);
+
+        entity.update(0);
+        
+        expect(start_spy).not.toHaveBeenCalled();
+        expect(destroy_spy).toHaveBeenCalled();
     });
 });
 
@@ -136,7 +210,7 @@ describe("parse_entities_from_config", async () => {
 
         expect(entity).toBeInstanceOf(Entity);
         expect(entity.name).toBe("Entity 1");
-        expect(entity.components.size).toBe(2);
+        expect(entity.get_components().size).toBe(2);
     });
 
     it("should log an error if a component fails to load", async () => {
@@ -166,7 +240,7 @@ describe("parse_entities_from_config", async () => {
         const entity = await parse_entities_from_config(entityConfig, resource_manager, world_manager);
 
         expect(entity).toBeInstanceOf(Entity);
-        expect(entity.components.size).toBe(1);
+        expect(entity.get_components().size).toBe(1);
         expect(log.error).toHaveBeenCalledWith(mockError);
     });
 });

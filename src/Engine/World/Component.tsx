@@ -8,6 +8,13 @@ import { ComponentConfig } from "Engine/Config/ComponentConfig";
 
 /**
  * Base class for all scripts attached to entities.
+ * 
+ * # Component
+ * Based on components from Unity, components support the aptly named Composite design pattern.
+ * Components are responsible for all the functionality of `Entity` objects.
+ * 
+ * @see {@link Entity}
+ * @see {@link https://en.wikipedia.org/wiki/Composite_pattern}
  */
 export default abstract class Component {
     /**
@@ -36,6 +43,11 @@ export default abstract class Component {
     world_manager_ref: WorldManager;
 
     /**
+     * Whether the component is going to be destroyed.
+     */
+    private death_flag: boolean;
+
+    /**
      * Creates a new component.
      * @param name the name of the component for querying.
      * @param active whether the component is active or not.
@@ -54,6 +66,8 @@ export default abstract class Component {
 
         this.resource_manager_ref = resource_manager_ref;
         this.world_manager_ref = world_manager_ref;
+
+        this.death_flag = false;
     }
 
     /**
@@ -82,6 +96,21 @@ export default abstract class Component {
      * Called when the component is being destroyed.
      */
     abstract dispose(): void;
+
+    /**
+     * Mark this component for destruction.
+     */
+    destroy() {
+        this.death_flag = true;
+    }
+
+    /**
+     * Returns true if this component is marked for destruction.
+     * @returns 
+     */
+    will_destroy(): boolean {
+        return this.death_flag;
+    }
 }
 
 /**
