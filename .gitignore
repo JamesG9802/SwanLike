@@ -28,6 +28,8 @@ dist-ssr
 
 # Build files
 *.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 
 # Documentation files
 /docs

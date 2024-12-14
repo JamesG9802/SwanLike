@@ -42,7 +42,35 @@ export class ResourceManager {
      */
     async initialize(file_config: FileConfig) {
         //  🥲 Vite can't handle dynamic local file paths.
+        const path_to_loader = await ResourceManager.get_resource_paths();
 
+        for (let i = 0; i < file_config.files.length; i++) {
+            this.resources.set(file_config.files[i].uuid, {
+                loaded: false,
+                type: file_config.files[i].type,
+                data: path_to_loader.get(file_config.files[i].file_path.toLowerCase())
+            });
+        }
+
+        // for(let i = 0; i < file_config.files.length; i++) {
+        //     this.resources.set(file_config.files[i].uuid, {
+        //         loaded: false,
+        //         type: file_config.files[i].type,
+        //         data: await import.meta.glob(file_config.files[i].file_path) 
+        //     });
+        // }
+    }
+
+    /**
+     * Returns a list of all 'resource' files in the project.
+     * Paths are lowercase.
+     * 
+     * Resource files are:
+     * - Scene files (.json)
+     * - Script files (.tsx) 
+     * @returns 
+     */
+    static async get_resource_paths(): Promise<Map<string, () => Promise<unknown>>> {
         const scenes = await import.meta.glob("/src/Resources/Scene/*.json");
         const scripts = await import.meta.glob("/src/Engine/Scripts/*.tsx");
 
@@ -54,22 +82,9 @@ export class ResourceManager {
         for (const path in scripts) {
             path_to_loader.set(path.toLowerCase(), scripts[path]);
         }
-
-        for (let i = 0; i < file_config.files.length; i++) {
-            this.resources.set(file_config.files[i].uuid, {
-                loaded: false,
-                type: file_config.files[i].type,
-                data: path_to_loader.get(file_config.files[i].file_path.toLowerCase())
-            });
-        }
-        // for(let i = 0; i < file_config.files.length; i++) {
-        //     this.resources.set(file_config.files[i].uuid, {
-        //         loaded: false,
-        //         type: file_config.files[i].type,
-        //         data: await import.meta.glob(file_config.files[i].file_path) 
-        //     });
-        // }
+        return path_to_loader;
     }
+
 
     /**
      * Returns true if the resource manager has a UUID. Does not check if the resource has been loaded.

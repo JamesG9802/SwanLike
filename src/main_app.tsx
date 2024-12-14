@@ -2,17 +2,16 @@ import ReactDOM from 'react-dom/client';
 
 import { StrictMode, useEffect } from 'react';
 
-import Editor from 'Editor';
+import App from 'App';
 import { root_element } from 'main';
 import { ThemeProvider } from "@material-tailwind/react";
 
 import "index.css";
-
 /**
- * Entry point for the SwanLike Editor.
+ * Entry point for the SwanLike application.
  * @returns 
  */
-export default function MainEditor() {
+export default function MainApplication() {
   function handle_dark_mode(prefers_dark_mode: boolean) {
     root_element?.classList.add(prefers_dark_mode ? "dark" : "light");
     root_element?.classList.remove(prefers_dark_mode ? "light" : "dark");
@@ -35,7 +34,7 @@ export default function MainEditor() {
   return (
     <>
       <ThemeProvider>
-        <Editor />
+        <App />
       </ThemeProvider>
     </>
   );
@@ -43,6 +42,6 @@ export default function MainEditor() {
 
 ReactDOM.createRoot(root_element!).render(
   <StrictMode>
-    <MainEditor />
+    <MainApplication />
   </StrictMode>,
 );
