@@ -19,9 +19,9 @@ import { Scene } from "three";
  * Only entities at the start of the frame will update. If any entities are added, such as through:
  * `world.add_entities(entity)`
  * 
- * @see {@link add_entities}
- * 
  * that entity is guaranteed to only update in the next update invocation.
+ * 
+ * @see {@link add_entities}
  * 
  * ## Entity list modification
  * Additions to the entity list are visible immediately.
@@ -179,6 +179,7 @@ export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
 /**
  * Hook to access the current world from the current `WorldManagerProvider`.
  * @returns 
+ * @see {@link World}
  */
 export function useWorld(): React.ReactNode | undefined {
     const world_manager = useWorldManager();

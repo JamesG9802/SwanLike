@@ -1,0 +1,10 @@
+.handler::before {
+    content: '';
+    @apply block w-[4px] h-full bg-primary mx-auto my-0
+}
+.handler svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
