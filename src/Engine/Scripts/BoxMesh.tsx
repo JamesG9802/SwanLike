@@ -7,6 +7,8 @@ import Component from "../World/Component";
 export default class BoxMesh extends Component {
     static name: string = "BoxMesh";
 
+    mesh: THREE.Mesh | undefined
+
     protected get_name(): string {
         return BoxMesh.name;
     }
@@ -16,11 +18,11 @@ export default class BoxMesh extends Component {
     dispose(): void { }
 
     start(): void {
-        const mesh = new THREE.Mesh()
-        mesh.geometry = new THREE.BoxGeometry()
-        mesh.material = new THREE.MeshStandardMaterial()
-
-        this.game_object.add(mesh);
+        this.mesh = new THREE.Mesh()
+        this.mesh.geometry = new THREE.BoxGeometry()
+        this.mesh.material = new THREE.MeshStandardMaterial()
+        
+        this.game_object.add(this.mesh);
     }
 
     update(): void { }

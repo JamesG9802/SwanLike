@@ -5,6 +5,7 @@ import { ResourceManager } from "../Managers/ResourceManager";
 import { WorldManager } from "../Managers/WorldManager";
 import { Entity } from "./Entity";
 import { ComponentConfig } from "Engine/Config/ComponentConfig";
+import { InputManager } from "Engine/Managers/InputManager";
 
 /**
  * Base class for all scripts attached to entities.
@@ -43,6 +44,11 @@ export default abstract class Component {
     world_manager_ref: WorldManager;
 
     /**
+     * Reference to the input manager.
+     */
+    input_manager_ref: InputManager;
+
+    /**
      * Whether the component is going to be destroyed.
      */
     private death_flag: boolean;
@@ -56,7 +62,9 @@ export default abstract class Component {
      * @param world_manager_ref a reference to the world manager.
      */
     constructor(active: boolean, game_object: Object3D,
-        resource_manager_ref: ResourceManager, world_manager_ref: WorldManager
+        resource_manager_ref: ResourceManager, 
+        world_manager_ref: WorldManager,
+        input_manager_ref: InputManager
     ) {
         //  We can't add the name to the constructor because components 
         //  only know their name after being created 😔.
@@ -66,6 +74,7 @@ export default abstract class Component {
 
         this.resource_manager_ref = resource_manager_ref;
         this.world_manager_ref = world_manager_ref;
+        this.input_manager_ref = input_manager_ref;
 
         this.death_flag = false;
     }
@@ -123,7 +132,10 @@ export default abstract class Component {
  */
 export async function parse_components_from_config(component_config: ComponentConfig,
     entity: Entity,
-    resource_manager: ResourceManager, world_manager: WorldManager): Promise<Component | undefined> {
+    resource_manager: ResourceManager, 
+    world_manager: WorldManager,
+    input_manager: InputManager,
+): Promise<Component | undefined> {
     //  The constructor matches `Component`'s constructor.
     type ComponentConstructor = new (...args: ConstructorParameters<typeof Component>) => Component;
 
@@ -138,7 +150,8 @@ export async function parse_components_from_config(component_config: ComponentCo
         component_config.active,
         entity,
         resource_manager,
-        world_manager
+        world_manager,
+        input_manager
     );
     component.initialize(component_config.data);
     return component;

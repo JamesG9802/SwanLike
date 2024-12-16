@@ -66,6 +66,23 @@ describe("ResourceManager", () => {
         import.meta.glob = originalGlob; // Restore the original function
     });
 
+    it("should load a raw resource correctly", async () => {
+        const originalGlob = import.meta.glob;
+        const mockGlob = {
+            "/src/Resources/scene/scene1.json": async () => (`{ name: "Scene1" }`),
+            "/src/Engine/Scripts/script1.tsx": async () => (`{ default: "Script1" }`),
+        };
+
+        import.meta.glob = vi.fn(() => mockGlob);
+
+        await resource_manager.initialize(file_config, true);
+
+        expect(resource_manager.has("123")).toBe(true);
+        expect(resource_manager.has("456")).toBe(true);
+
+        import.meta.glob = originalGlob; // Restore the original function
+    });
+
     it("should return true for an existing resource", async () => {
         await resource_manager.initialize(file_config);
         expect(resource_manager.has("123")).toBe(true);
