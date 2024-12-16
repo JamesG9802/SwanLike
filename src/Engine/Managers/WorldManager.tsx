@@ -5,6 +5,7 @@ import { createContext, useContext } from "react";
 import { ResourceManager } from "./ResourceManager";
 import { parse_world_from_config, ThreeWorld, World } from "Engine/World";
 import { WorldConfig } from "Engine/Config/WorldConfig";
+import { InputManager } from "./InputManager";
 
 /**
  * A manager of all possible scenes and controls the current scene of the application.
@@ -21,13 +22,19 @@ export class WorldManager {
     private readonly resource_manager_ref: ResourceManager;
 
     /**
+     * Reference to the input manager.
+     */
+    private readonly input_manager_ref: InputManager;
+
+    /**
      * The current world.
      */
     private world?: World;
 
-    constructor(start_scene_uuid: string, resource_manager: ResourceManager) {
+    constructor(start_scene_uuid: string, resource_manager: ResourceManager, input_manager: InputManager) {
         this.on_scene_change = new EventHandler<WorldManager, void>(this);
         this.resource_manager_ref = resource_manager;
+        this.input_manager_ref = input_manager;
 
         this.change_scene(start_scene_uuid);
     }
@@ -60,7 +67,12 @@ export class WorldManager {
             return false;
         }
 
-        this.world = await parse_world_from_config(world_config, this.resource_manager_ref, this);
+        this.world = await parse_world_from_config(
+            world_config, 
+            this.resource_manager_ref, 
+            this,
+            this.input_manager_ref
+        );
         this.on_scene_change.notify();
 
         return true;
@@ -83,14 +95,14 @@ export const WorldManagerContext = createContext<WorldManager | undefined>(undef
 export function useWorldManager(): WorldManager | undefined {
     const world_context = useContext<WorldManager | undefined>(WorldManagerContext);
     if (!world_context) {
-        log.error("useWorld hook must be used with a WorldProvider");
+        log.error("useWorldManager hook must be used with a WorldManagerProvider");
         return undefined;
     }
     return world_context;
 }
 
 /**
- * Props for the WorldProvider. 
+ * Props for the WorldManagerProvider. 
  */
 export type WorldProviderProps = {
     /**

@@ -6,6 +6,7 @@ import Component, { parse_components_from_config } from "./Component"
 import { ResourceManager } from '../Managers/ResourceManager';
 import { WorldManager } from "../Managers/WorldManager";
 import { EntityConfig } from "Engine/Config/EntityConfig";
+import { InputManager } from "Engine/Managers/InputManager";
 
 /**
  * An entity is a basic Object3D with support for component scripts.
@@ -217,7 +218,9 @@ export class Entity extends THREE.Object3D {
  * @returns 
  */
 export async function parse_entities_from_config(entity_config: EntityConfig,
-    resource_manager: ResourceManager, world_manager: WorldManager
+    resource_manager: ResourceManager, 
+    world_manager: WorldManager,
+    input_manager: InputManager,
 ): Promise<Entity> {
     const entity = new Entity(entity_config.name);
 
@@ -231,7 +234,15 @@ export async function parse_entities_from_config(entity_config: EntityConfig,
     const promises: Promise<Component | undefined>[] = [];
 
     for (let i = 0; i < entity_config.components.length; i++) {
-        promises.push(parse_components_from_config(entity_config.components[i], entity, resource_manager, world_manager));
+        promises.push(
+            parse_components_from_config(
+                entity_config.components[i], 
+                entity, 
+                resource_manager, 
+                world_manager,
+                input_manager
+            )
+        );
     }
 
     const results = await Promise.allSettled(promises);

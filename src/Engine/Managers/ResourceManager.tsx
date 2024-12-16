@@ -40,9 +40,9 @@ export class ResourceManager {
      * Asynchronously gets all resources the application needs.
      * @param file_config 
      */
-    async initialize(file_config: FileConfig) {
+    async initialize(file_config: FileConfig, raw: boolean = false) {
         //  🥲 Vite can't handle dynamic local file paths.
-        const path_to_loader = await ResourceManager.get_resource_paths();
+        const path_to_loader = await ResourceManager.get_resource_paths(raw);
 
         for (let i = 0; i < file_config.files.length; i++) {
             this.resources.set(file_config.files[i].uuid, {
@@ -67,12 +67,19 @@ export class ResourceManager {
      * 
      * Resource files are:
      * - Scene files (.json)
-     * - Script files (.tsx) 
+     * - Script files (.tsx)
+     * @param raw - whether the resource should be fetched raw content only
      * @returns 
      */
-    static async get_resource_paths(): Promise<Map<string, () => Promise<unknown>>> {
-        const scenes = await import.meta.glob("/src/Resources/Scene/*.json");
-        const scripts = await import.meta.glob("/src/Engine/Scripts/*.tsx");
+    static async get_resource_paths(raw: boolean = false): Promise<Map<string, () => Promise<unknown>>> {
+        const scenes = !raw ?
+            await import.meta.glob("/src/Resources/Scene/*.json") :
+            await import.meta.glob("/src/Resources/Scene/*.json", { query: "?raw"}    
+        );
+        const scripts = !raw ? 
+            await import.meta.glob("/src/Engine/Scripts/*.tsx") :
+            await import.meta.glob("/src/Engine/Scripts/*.tsx", { query: "?raw"}
+        );
 
         const path_to_loader: Map<string, () => Promise<unknown>> = new Map<string, () => Promise<unknown>>();
 

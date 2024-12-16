@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+// import type { Config } from 'tailwindcss'
 
 import withMT from "@material-tailwind/react/utils/withMT";
 
@@ -15,6 +15,11 @@ export default withMT({
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      sans: ["ui-sans-serif", "system-ui", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
+      serif: ["ui-serif", "Georgia", "Cambria", "Times New Roman", "Times", "serif"],
+      mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+    },
     extend: {
       colors: {
         primary: "oklab(from var(--color-primary) l a b / <alpha-value>)",

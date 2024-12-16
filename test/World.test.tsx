@@ -16,6 +16,7 @@ import { FileConfig } from "Engine/Config/FileResourceConfig";
 import { ApplicationConfig } from "Engine/Config/AppConfig";
 import { renderHook } from "@testing-library/react";
 import { EntityConfig } from "Engine/Config/EntityConfig";
+import { InputManager } from "Engine/Managers/InputManager";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -55,7 +56,10 @@ describe("ThreeWorld", () => {
         }
 
         const component = new TestComponent(true, entities[0],
-            undefined as unknown as ResourceManager, undefined as unknown as WorldManager);
+            undefined as unknown as ResourceManager,
+            undefined as unknown as WorldManager,
+            undefined as unknown as InputManager
+        );
         component.initialize();
 
         const start_spy = vi.spyOn(component, "start");
@@ -98,10 +102,13 @@ describe("ThreeWorld", () => {
         }
 
         const adder_component = new TestComponent(true, entities[0],
-            undefined as unknown as ResourceManager, {
+            undefined as unknown as ResourceManager,
+            {
                 world: world,
                 get_world: () => { return world; }
-            } as unknown as WorldManager);
+            } as unknown as WorldManager,
+            undefined as unknown as InputManager
+        );
 
         entities[0].add_components(adder_component);
 
@@ -136,10 +143,12 @@ describe("ThreeWorld", () => {
         }
 
         const deleter_component = new TestComponent(true, entities[0],
-            undefined as unknown as ResourceManager, {
+            undefined as unknown as ResourceManager,
+            {
                 world: world,
                 get_world: () => { return world; }
-            } as unknown as WorldManager
+            } as unknown as WorldManager,
+            undefined as unknown as InputManager
         );
         deleter_component.initialize("Entity 2");
 
@@ -154,7 +163,61 @@ describe("ThreeWorld", () => {
         });
 
     });
+    
+    it("should be able to call get_three", async () => {
+        const entities = [new Entity("Entity 1"), new Entity("Entity 2")];
+        const world = new World(entities);
+        const renderer = await ReactThreeTestRenderer.create(<ThreeWorld world={world} />);
 
+        await ReactThreeTestRenderer.act(async () => {
+            await renderer.advanceFrames(60, 100);
+            expect(world.get_three()).toBeDefined();
+            expect(world.get_three()?.scene.children.length).toBe(2);
+            await renderer.unmount();
+        });
+    });
+
+    it("shouldn't run if disabled", async () => {
+        const entities = [new Entity("Entity 1"), new Entity("Entity 2")];
+        const world = new World(entities);
+        world.active = false;
+
+        class TestComponent extends Component {
+            operation_executed: boolean = false;
+            target: string = "";
+            protected get_name(): string { return "TestComponent"; }
+            initialize(target: string): void { this.target = target; }
+            start(): void { }
+            update(): void {
+                if (!this.operation_executed) {
+                    const results = this.world_manager_ref.get_world()!.find_by_name(this.target);
+                    results[0].destroy();
+                    this.operation_executed = true;
+                }
+            }
+            dispose(): void { }
+        }
+
+        const deleter_component = new TestComponent(true, entities[0],
+            undefined as unknown as ResourceManager,
+            {
+                world: world,
+                get_world: () => { return world; }
+            } as unknown as WorldManager,
+            undefined as unknown as InputManager
+        );
+        deleter_component.initialize("Entity 2");
+
+        entities[0].add_components(deleter_component);
+
+        const renderer = await ReactThreeTestRenderer.create(<ThreeWorld world={world} />);
+
+        await ReactThreeTestRenderer.act(async () => {
+            await renderer.advanceFrames(60, 100);
+            expect(renderer.scene.children.length).toBe(2);
+            await renderer.unmount();
+        });
+    })
 });
 
 describe("useWorld", () => {
@@ -162,7 +225,11 @@ describe("useWorld", () => {
         const resource_manager: ResourceManager = new ResourceManager();
         await resource_manager.initialize(file_config_resource as FileConfig);
 
-        const world_manager: WorldManager = new WorldManager((app_config_resource as ApplicationConfig).start_scene, resource_manager);
+        const world_manager: WorldManager = new WorldManager(
+            (app_config_resource as ApplicationConfig).start_scene, 
+            resource_manager,
+            undefined as unknown as InputManager
+        );
         await world_manager.change_scene((app_config_resource as ApplicationConfig).start_scene);
 
         const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -181,7 +248,11 @@ describe("useWorld", () => {
         const resource_manager: ResourceManager = new ResourceManager();
         await resource_manager.initialize(file_config_resource as FileConfig);
 
-        const world_manager: WorldManager = new WorldManager((app_config_resource as ApplicationConfig).start_scene, resource_manager);
+        const world_manager: WorldManager = new WorldManager(
+            (app_config_resource as ApplicationConfig).start_scene, 
+            resource_manager,
+            undefined as unknown as InputManager
+        );
         await world_manager.change_scene((app_config_resource as ApplicationConfig).start_scene);
 
         const attach_spy = vi.spyOn(world_manager.on_scene_change, "attach");
@@ -210,7 +281,11 @@ describe("parse_world_from_config", () => {
         await resource_manager.initialize(file_config_resource as FileConfig);
 
         const parse_spy = vi.spyOn(EngineWorld, "parse_world_from_config");
-        const world_manager: WorldManager = new WorldManager((app_config_resource as ApplicationConfig).start_scene, resource_manager);
+        const world_manager: WorldManager = new WorldManager(
+            (app_config_resource as ApplicationConfig).start_scene, 
+            resource_manager,
+            undefined as unknown as InputManager
+        );
         await world_manager.change_scene((app_config_resource as ApplicationConfig).start_scene);
 
         expect(world_manager.get_scene()).toBeDefined();
@@ -222,7 +297,11 @@ describe("parse_world_from_config", () => {
         const resource_manager: ResourceManager = new ResourceManager();
         await resource_manager.initialize(file_config_resource as FileConfig);
 
-        const world_manager: WorldManager = new WorldManager((app_config_resource as ApplicationConfig).start_scene, resource_manager);
+        const world_manager: WorldManager = new WorldManager(
+            (app_config_resource as ApplicationConfig).start_scene, 
+            resource_manager,
+            undefined as unknown as InputManager
+        );
 
         await parse_world_from_config({
             entities: [
@@ -235,8 +314,10 @@ describe("parse_world_from_config", () => {
                 },
                 undefined as unknown as EntityConfig,
             ]
-        },
-            resource_manager, world_manager
+            },
+            resource_manager, 
+            world_manager,
+            undefined as unknown as InputManager
         );
 
         expect(log.error).toHaveBeenCalledWith("Couldn't load entity.");

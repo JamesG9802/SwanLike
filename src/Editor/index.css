@@ -8,3 +8,24 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.raw-text {
+    counter-reset: line;
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.raw-text div {
+    display: contents;
+    grid-column: 2;
+}
+.raw-text div::before {
+    counter-increment: line;
+    content: counter(line);
+    border-right: 1px solid;
+    grid-column: 1;
+    @apply border-onsurfacevariant;
+    @apply text-right;
+    @apply inline-flex justify-end w-8 overflow-hidden;
+    @apply pr-2 mr-1;
+}

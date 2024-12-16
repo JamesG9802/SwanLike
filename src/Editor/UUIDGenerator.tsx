@@ -36,7 +36,7 @@ export function UUID_Generator() {
       <div className="flex flex-col space-y-4">
         <div className="flex flex-row ">
           <div
-            className="cursor-pointer rounded-md hover:text-primary hover:fill-primary hover:bg-surfacedim" 
+            className="cursor-pointer rounded-md hover:text-primary hover:fill-primary hover:bg-surfacecontainer" 
             onClick={() => {
               const uuid = v6();
               set_uuid(uuid);
@@ -46,10 +46,10 @@ export function UUID_Generator() {
             <Icon path={mdiPlusCircle} size={1}/>
           </div>
           <div 
-            className={`cursor-pointer rounded-md ${
+            className={`rounded-md ${
               uuid == "" ? 
-              "text-surfacedim fill-surfacedim" : 
-              "hover:text-primary hover:fill-primary hover:bg-surfacedim"}`}
+              "text-surfacecontainer fill-surfacecontainer" : 
+              "cursor-pointer hover:text-primary hover:fill-primary hover:bg-surfacecontainer"}`}
             onClick={() => { if(uuid != "") to_clipboard(); }}
           > 
             <Icon
@@ -61,7 +61,7 @@ export function UUID_Generator() {
         </div>
         <div>
           <p className="m-0 py-1 inline float-left select-none">UUID:&nbsp;</p>
-          <p className="m-0 py-1 inline float-left bg-surfacedim">{uuid}</p>
+          <p className="m-0 py-1 inline float-left bg-surfacecontainer">{uuid}</p>
         </div>
       </div>
     </EditorContainer>

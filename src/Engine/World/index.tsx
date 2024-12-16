@@ -7,7 +7,8 @@ import { RootState, useFrame, useThree } from "@react-three/fiber";
 import { useWorldManager, WorldManager } from "Engine/Managers/WorldManager";
 import { ResourceManager } from "Engine/Managers/ResourceManager";
 import { WorldConfig } from "Engine/Config/WorldConfig";
-import { Scene } from "three";
+
+import { InputManager } from "Engine/Managers/InputManager";
 
 /**
  * The logical representation of a scene containing entities.
@@ -30,30 +31,45 @@ import { Scene } from "three";
  * @see {@link update}
  */
 export class World {
+
+    /**
+     * Whether the world is currently running or not.
+     */
+    active: boolean;
+
     /**
      * The entities of the world.
      */
     private entities: Entity[];
 
     /**
-     * The Three.JS scene container that will be rendered to a JSX.component.
+     * The React Three Fiber state data.
      */
-    private scene?: Scene;
+    private three?: RootState;
 
     /**
      * Creates a world based on entities.
      * @param entities
      */
     constructor(entities: Entity[]) {
+        this.active = true;
         this.entities = entities;
     }
 
     /**
-     * Adds the Three.js scene to the world.
+     * Adds the React Three Fiber data to the world.
      * @param scene
      */
-    link_scene(scene: Scene) {
-        this.scene = scene;
+    link_three_react_fiber(three: RootState) {
+        this.three = three;
+    }
+
+    /**
+     * Returns the RootState.
+     * @returns 
+     */
+    get_three(): RootState | undefined {
+        return this.three;
     }
 
     /**
@@ -71,6 +87,9 @@ export class World {
      * @param delta 
      */
     update(_state: RootState, delta: number) {
+        if(!this.active) {
+            return;
+        }
         this.entities.forEach((entity) => {
             entity.update(delta);
         });
@@ -85,7 +104,7 @@ export class World {
         for (let i = 0; i < this.entities.length; i++) {
             if (this.entities[i].will_destroy()) {
                 this.entities[i].dispose();
-                this.scene?.remove(this.entities[i]);
+                this.three?.scene.remove(this.entities[i]);
                 this.entities.splice(i, 1);
                 i -= 1;
             }
@@ -107,9 +126,9 @@ export class World {
     add_entities(...entities: Entity[]) {
         this.entities = [...this.entities, ...entities];
 
-        if (this.scene != undefined) {
+        if (this.three != undefined) {
             for (let i = 0; i < entities.length; i++) {
-                this.scene.add(entities[i]);
+                this.three.scene.add(entities[i]);
             }
         }
     }
@@ -141,19 +160,19 @@ export type ThreeWorldProps = {
  * @returns 
  */
 export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
-    const { scene } = useThree();
+    const three = useThree();
     const world_ref = useRef<World>();
 
     //  On initialization, store a deep copy of the entities. 
     //  The entities' scripts' Start function are all invoked.
     useEffect(() => {
         world_ref.current = world;
-        world_ref.current.link_scene(scene);
-        scene.add(...world_ref.current.get_entities());
+        world_ref.current.link_three_react_fiber(three);
+        three.scene.add(...world_ref.current.get_entities());
         world_ref.current.start();
 
         return () => {
-            scene.remove(...world_ref.current!.get_entities());
+            three.scene.remove(...world_ref.current!.get_entities());
 
             //  explicitly call cleanup on entities
             for (let i = 0; i < world_ref.current!.get_entities().length; i++) {
@@ -161,7 +180,7 @@ export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
             }
             log.info("Cleaning up scene.");
         }
-    }, [scene, world]);
+    }, [three, world]);
 
     //  Every animation frame, the Update function is called.
     useFrame((_state, delta) => {
@@ -208,12 +227,21 @@ export function useWorld(): React.ReactNode | undefined {
  * @returns the Three React world component.
  */
 export async function parse_world_from_config(world_config: WorldConfig,
-    resource_manager: ResourceManager, world_manager: WorldManager): Promise<World> {
+    resource_manager: ResourceManager, 
+    world_manager: WorldManager,
+    input_manager: InputManager
+): Promise<World> {
     const entities: Entity[] = [];
     const promises: Promise<Entity>[] = [];
 
     for (let i = 0; i < world_config.entities.length; i++) {
-        promises.push(parse_entities_from_config(world_config.entities[i], resource_manager, world_manager));
+        promises.push(
+            parse_entities_from_config(
+                world_config.entities[i], 
+                resource_manager, 
+                world_manager,
+                input_manager
+            ));
     }
 
     const results = await Promise.allSettled(promises);
