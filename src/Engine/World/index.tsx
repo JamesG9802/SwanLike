@@ -4,11 +4,11 @@ import { Listener } from "Utility/EventHandler";
 import { useEffect, useRef, useState } from "react";
 import { Entity, parse_entities_from_config } from "Engine/World/Entity";
 import { RootState, useFrame, useThree } from "@react-three/fiber";
-import { useWorldManager, WorldManager } from "Engine/Managers/WorldManager";
-import { ResourceManager } from "Engine/Managers/ResourceManager";
+import { useWorldManager, WorldManager } from "Engine/Manager/WorldManager";
+import { ResourceManager } from "Engine/Manager/ResourceManager";
 import { WorldConfig } from "Engine/Config/WorldConfig";
 
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 /**
  * The logical representation of a scene containing entities.
@@ -112,6 +112,15 @@ export class World {
     }
 
     /**
+     * Cleanup all resources owned by this world.
+     */
+    dispose() {
+        for (let i = 0; i < this.get_entities().length; i++) {
+            this.get_entities()[i].dispose();
+        }
+    }
+
+    /**
      * Returns a list of all entities.
      * @returns 
      */
@@ -175,9 +184,9 @@ export function ThreeWorld({ world }: ThreeWorldProps): JSX.Element {
             three.scene.remove(...world_ref.current!.get_entities());
 
             //  explicitly call cleanup on entities
-            for (let i = 0; i < world_ref.current!.get_entities().length; i++) {
-                world_ref.current!.get_entities()[i].dispose();
-            }
+            // for (let i = 0; i < world_ref.current!.get_entities().length; i++) {
+            //     world_ref.current!.get_entities()[i].dispose();
+            // }
             log.info("Cleaning up scene.");
         }
     }, [three, world]);

@@ -1,11 +1,11 @@
 import log from "loglevel";
 
 import { Object3D } from "three";
-import { ResourceManager } from "../Managers/ResourceManager";
-import { WorldManager } from "../Managers/WorldManager";
+import { ResourceManager } from "../Manager/ResourceManager";
+import { WorldManager } from "../Manager/WorldManager";
 import { Entity } from "./Entity";
 import { ComponentConfig } from "Engine/Config/ComponentConfig";
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 /**
  * Base class for all scripts attached to entities.

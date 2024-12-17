@@ -5,8 +5,8 @@ import ReactThreeTestRenderer, { act } from "@react-three/test-renderer";
 import { parse_world_from_config, ThreeWorld, useWorld, World } from "Engine/World";
 import * as EngineWorld from "Engine/World";
 import Component from "Engine/World/Component";
-import { ResourceManager } from "Engine/Managers/ResourceManager";
-import { WorldManager, WorldManagerProvider } from "Engine/Managers/WorldManager";
+import { ResourceManager } from "Engine/Manager/ResourceManager";
+import { WorldManager, WorldManagerProvider } from "Engine/Manager/WorldManager";
 
 import log from "loglevel";
 
@@ -16,7 +16,7 @@ import { FileConfig } from "Engine/Config/FileResourceConfig";
 import { ApplicationConfig } from "Engine/Config/AppConfig";
 import { renderHook } from "@testing-library/react";
 import { EntityConfig } from "Engine/Config/EntityConfig";
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -79,6 +79,12 @@ describe("ThreeWorld", () => {
 
         expect(start_spy).toHaveBeenCalled();
         expect(update_spy).toHaveBeenCalled();
+
+        //  Dispose shouldn't be called unless the world is explicitly disposed/
+        expect(dispose_spy).not.toHaveBeenCalled();
+
+        world.dispose();
+
         expect(dispose_spy).toHaveBeenCalled();
         expect(invoke_order).toBe("01234");
     });

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FileConfig, FileResourceType } from "Engine/Config/FileResourceConfig";
-import { ResourceManager } from "Engine/Managers/ResourceManager";
+import { ResourceManager } from "Engine/Manager/ResourceManager";
 
 import log from "loglevel";
 

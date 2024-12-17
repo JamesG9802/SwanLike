@@ -59,13 +59,15 @@ export class WorldManager {
      * @returns true if the operation was successful and false otherwise
      */
     async change_scene(scene_uuid: string): Promise<boolean> {
-        log.info(`Changing scene to ${scene_uuid}.`);
+        log.info(`Attempting to change scene to ${scene_uuid}.`);
         const world_config = await this.resource_manager_ref.load<WorldConfig>(scene_uuid);
 
         if (world_config == undefined) {
             log.error(`Failed to load world config ${scene_uuid}`);
             return false;
         }
+
+        this.world?.dispose();
 
         this.world = await parse_world_from_config(
             world_config, 
