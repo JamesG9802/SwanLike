@@ -5,38 +5,33 @@ import { createContext, useContext } from "react";
 import { ResourceManager } from "./ResourceManager";
 import { parse_world_from_config, ThreeWorld, World } from "Engine/World";
 import { WorldConfig } from "Engine/Config/WorldConfig";
-import { InputManager } from "./InputManager";
+
+import Manager from ".";
+import Engine from "Engine";
 
 /**
  * A manager of all possible scenes and controls the current scene of the application.
  */
-export class WorldManager {
+export class WorldManager extends Manager {
+    static name: string = "WorldManager";
+
     /**
      * An event handler for when the scene changes.
      */
     public readonly on_scene_change: EventHandler<WorldManager, void>;
 
     /**
-     * A reference to the resource manager.
-     */
-    private readonly resource_manager_ref: ResourceManager;
-
-    /**
-     * Reference to the input manager.
-     */
-    private readonly input_manager_ref: InputManager;
-
-    /**
      * The current world.
      */
     private world?: World;
 
-    constructor(start_scene_uuid: string, resource_manager: ResourceManager, input_manager: InputManager) {
+    constructor(engine: Engine) {
+        super(engine);
         this.on_scene_change = new EventHandler<WorldManager, void>(this);
-        this.resource_manager_ref = resource_manager;
-        this.input_manager_ref = input_manager;
+    }
 
-        this.change_scene(start_scene_uuid);
+    protected get_name(): string {
+        return WorldManager.name;
     }
 
     /**
@@ -60,7 +55,9 @@ export class WorldManager {
      */
     async change_scene(scene_uuid: string): Promise<boolean> {
         log.info(`Attempting to change scene to ${scene_uuid}.`);
-        const world_config = await this.resource_manager_ref.load<WorldConfig>(scene_uuid);
+        const world_config = await this.engine
+            .get_manager<ResourceManager>(ResourceManager.name)!
+            .load<WorldConfig>(scene_uuid);
 
         if (world_config == undefined) {
             log.error(`Failed to load world config ${scene_uuid}`);
@@ -71,9 +68,7 @@ export class WorldManager {
 
         this.world = await parse_world_from_config(
             world_config, 
-            this.resource_manager_ref, 
-            this,
-            this.input_manager_ref
+            this.engine
         );
         this.on_scene_change.notify();
 

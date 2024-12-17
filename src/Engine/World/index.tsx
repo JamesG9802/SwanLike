@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { Entity, parse_entities_from_config } from "Engine/World/Entity";
 import { RootState, useFrame, useThree } from "@react-three/fiber";
 import { useWorldManager, WorldManager } from "Engine/Manager/WorldManager";
-import { ResourceManager } from "Engine/Manager/ResourceManager";
+
 import { WorldConfig } from "Engine/Config/WorldConfig";
 
-import { InputManager } from "Engine/Manager/InputManager";
+import Engine from "Engine";
 
 /**
  * The logical representation of a scene containing entities.
@@ -231,14 +231,11 @@ export function useWorld(): React.ReactNode | undefined {
 /**
  * Parses a world config into a world
  * @param world_config the world config JSON object
- * @param resource_manager the resource manager
- * @param world_manager the world manager
+ * @package engine the Three.JS engine
  * @returns the Three React world component.
  */
 export async function parse_world_from_config(world_config: WorldConfig,
-    resource_manager: ResourceManager, 
-    world_manager: WorldManager,
-    input_manager: InputManager
+    engine: Engine
 ): Promise<World> {
     const entities: Entity[] = [];
     const promises: Promise<Entity>[] = [];
@@ -246,10 +243,8 @@ export async function parse_world_from_config(world_config: WorldConfig,
     for (let i = 0; i < world_config.entities.length; i++) {
         promises.push(
             parse_entities_from_config(
-                world_config.entities[i], 
-                resource_manager, 
-                world_manager,
-                input_manager
+                world_config.entities[i],
+                engine
             ));
     }
 

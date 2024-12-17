@@ -3,6 +3,7 @@ import { FileConfig, FileResourceType } from "Engine/Config/FileResourceConfig";
 import { ResourceManager } from "Engine/Manager/ResourceManager";
 
 import log from "loglevel";
+import Engine from "Engine";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -11,11 +12,14 @@ vi.mock("loglevel", () => ({
 }));
 
 describe("ResourceManager", () => {
+    let engine: Engine;
     let resource_manager: ResourceManager;
     let file_config: FileConfig;
 
     beforeEach(() => {
-        resource_manager = new ResourceManager();
+        engine = new Engine();
+        resource_manager = new ResourceManager(engine);
+        engine.add_managers(resource_manager);
 
         file_config = {
             files: [
