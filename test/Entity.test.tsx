@@ -4,14 +4,14 @@ import { EntityConfig } from "Engine/Config/EntityConfig";
 import log from "loglevel";
 import { Entity, parse_entities_from_config } from "Engine/World/Entity";
 import Component from "Engine/World/Component";
-import { ResourceManager } from "Engine/Managers/ResourceManager";
-import { WorldManager } from "Engine/Managers/WorldManager";
+import { ResourceManager } from "Engine/Manager/ResourceManager";
+import { WorldManager } from "Engine/Manager/WorldManager";
 
 import app_config_resource from "Resources/Config/application.config.json";
 import file_config_resource from "Resources/Config/resource.config.json";
 import { FileConfig } from "Engine/Config/FileResourceConfig";
 import { ApplicationConfig } from "Engine/Config/AppConfig";
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 vi.mock("loglevel", () => ({
     default: {

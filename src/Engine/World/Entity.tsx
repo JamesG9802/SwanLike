@@ -3,10 +3,10 @@ import log from "loglevel";
 import * as THREE from 'three';
 
 import Component, { parse_components_from_config } from "./Component"
-import { ResourceManager } from '../Managers/ResourceManager';
-import { WorldManager } from "../Managers/WorldManager";
+import { ResourceManager } from '../Manager/ResourceManager';
+import { WorldManager } from "../Manager/WorldManager";
 import { EntityConfig } from "Engine/Config/EntityConfig";
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 /**
  * An entity is a basic Object3D with support for component scripts.
@@ -41,6 +41,11 @@ import { InputManager } from "Engine/Managers/InputManager";
  */
 export class Entity extends THREE.Object3D {
     /**
+     * Whether or not the entity has had it's start function invoked yet.
+     */
+    private has_started: boolean;
+    
+    /**
      * Components that will be added to the component list.
      */
     private future_components: Map<string, Component>;
@@ -61,6 +66,8 @@ export class Entity extends THREE.Object3D {
      */
     constructor(name: string = "") {
         super();
+
+        this.has_started = false;
         this.name = name;
 
         this.future_components = new Map<string, Component>();
@@ -131,6 +138,11 @@ export class Entity extends THREE.Object3D {
      * Invoke all components that need to start.
      */
     start() {
+        if(this.has_started) {
+            return;
+        }
+
+        this.has_started = true;
         this.future_components.forEach((component, name) => {
             component.start();
             this.components.set(name, component);

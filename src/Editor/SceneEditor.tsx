@@ -6,8 +6,8 @@ import { useWorld } from 'Engine/World'
 import debug_app_config_resource from "Resources/Config/debug.config.json";
 import file_config_resource from "Resources/Config/resource.config.json";
 
-import { WorldManager, WorldManagerProvider } from 'Engine/Managers/WorldManager';
-import { ResourceManager } from 'Engine/Managers/ResourceManager';
+import { WorldManager, WorldManagerProvider } from 'Engine/Manager/WorldManager';
+import { ResourceManager } from 'Engine/Manager/ResourceManager';
 import { ApplicationConfig } from 'Engine/Config/AppConfig';
 import { FileConfig } from 'Engine/Config/FileResourceConfig';
 import { EditorContainer } from 'Editor';
@@ -16,7 +16,7 @@ import Icon from '@mdi/react';
 import { mdiPause } from '@mdi/js';
 import { mdiPlay } from '@mdi/js';
 import { Option, Select } from '@material-tailwind/react';
-import { InputManager } from 'Engine/Managers/InputManager';
+import { InputManager } from 'Engine/Manager/InputManager';
 
 /**
  * Functional component for rendering out the current scene from the World Manager.

@@ -5,11 +5,11 @@ import { useWorld } from 'Engine/World'
 
 import app_config_resource from "Resources/Config/application.config.json";
 import file_config_resource from "Resources/Config/resource.config.json";
-import { useWorldManager, WorldManager, WorldManagerProvider } from 'Engine/Managers/WorldManager';
-import { ResourceManager } from 'Engine/Managers/ResourceManager';
+import { WorldManager, WorldManagerProvider } from 'Engine/Manager/WorldManager';
+import { ResourceManager } from 'Engine/Manager/ResourceManager';
 import { ApplicationConfig } from 'Engine/Config/AppConfig';
 import { FileConfig } from 'Engine/Config/FileResourceConfig';
-import { InputManager } from 'Engine/Managers/InputManager';
+import { InputManager } from 'Engine/Manager/InputManager';
 
 /**
  * Functional component for rendering out the current scene from the World Manager.
@@ -19,12 +19,6 @@ function Scene() {
   const world = useWorld();
 
   return world;
-}
-
-function Test() {
-  const worldManager = useWorldManager();
-
-  return <button onClick={() => { worldManager?.change_scene("1efb8133-1808-6390-b69b-79e991f8fba5") }}>Debug scene</button>
 }
 
 /**
@@ -75,7 +69,6 @@ export function App() {
             <Canvas ref={canvas_ref} onMouseMove={(event) => { input_manager.on_mouse_move(event)}} >
               <Scene />
             </Canvas>
-            <Test />
           </WorldManagerProvider>
           :
           <div>

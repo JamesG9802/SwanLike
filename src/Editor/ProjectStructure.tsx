@@ -1,5 +1,5 @@
 import log from "loglevel";
-import { ResourceManager } from "Engine/Managers/ResourceManager";
+import { ResourceManager } from "Engine/Manager/ResourceManager";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { EditorContainer } from "Editor";
 import Icon from '@mdi/react';

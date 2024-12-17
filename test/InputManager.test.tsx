@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 vi.mock("loglevel", () => ({
     default: {

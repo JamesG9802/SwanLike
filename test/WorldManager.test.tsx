@@ -3,10 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { createElement } from "react";
 import log from "loglevel";
-import { ResourceManager } from "Engine/Managers/ResourceManager";
-import { useWorldManager, WorldManager, WorldManagerProvider } from "Engine/Managers/WorldManager";
+import { ResourceManager } from "Engine/Manager/ResourceManager";
+import { useWorldManager, WorldManager, WorldManagerProvider } from "Engine/Manager/WorldManager";
 import { World } from "Engine/World";
-import { InputManager } from "Engine/Managers/InputManager";
+import { InputManager } from "Engine/Manager/InputManager";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -55,7 +55,7 @@ describe("WorldManager", () => {
         vi.spyOn(resource_manager, "load").mockResolvedValue({ name: "Test World Config" });
 
         await worldmanager.change_scene("456");
-        expect(log.info).toHaveBeenCalledWith("Changing scene to 456.");
+        expect(log.info).toHaveBeenCalledWith("Attempting to change scene to 456.");
     });
 
     it("should notify listeners on scene change", async () => {
