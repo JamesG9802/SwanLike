@@ -7,6 +7,7 @@ import { ResourceManager } from "Engine/Manager/ResourceManager";
 import { useWorldManager, WorldManager, WorldManagerProvider } from "Engine/Manager/WorldManager";
 import { World } from "Engine/World";
 import { InputManager } from "Engine/Manager/InputManager";
+import Engine from "Engine";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -22,14 +23,23 @@ vi.mock("Engine/World", () => ({
 }));
 
 describe("WorldManager", () => {
+    let engine: Engine;
     let resource_manager: ResourceManager;
     let input_manager: InputManager;
     let worldmanager: WorldManager;
 
     beforeEach(() => {
-        resource_manager = new ResourceManager();
-        input_manager = new InputManager();
-        worldmanager = new WorldManager("123", resource_manager, input_manager);
+        engine = new Engine;
+        
+        resource_manager = new ResourceManager(engine);
+        engine.add_managers(resource_manager);
+        
+        input_manager = new InputManager(engine)
+        engine.add_managers(input_manager);
+        
+        worldmanager = new WorldManager(engine);
+        engine.add_managers(worldmanager)
+
     });
 
     it("should initialize with the starting scene", async () => {
@@ -71,7 +81,8 @@ describe("WorldManager", () => {
 
 describe("WorldManagerProvider and useWorldManager", () => {
     it("should provide the WorldManager instance via context", () => {
-        const manager = new WorldManager("123", new ResourceManager(), new InputManager());
+        const engine: Engine = new Engine()
+        const manager = new WorldManager(engine);
         const wrapper = ({ children }: { children: React.ReactNode }) =>
             createElement(WorldManagerProvider, { manager, children });
 

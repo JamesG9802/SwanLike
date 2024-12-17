@@ -7,6 +7,7 @@ import { mdiArrowSplitVertical } from '@mdi/js';
 
 import file_config_resource from "Resources/Config/resource.config.json";
 import { FileConfig } from "Engine/Config/FileResourceConfig";
+import Engine from "Engine";
 
 /**
  * An asset file from the project.
@@ -236,7 +237,7 @@ function useProjectViewerData(): ProjectViewerAPI | undefined {
 
 export function ProjectViewer() {
   const [project_data, set_project_data] = useState<ProjectViewerData>({
-    resource_manager: new ResourceManager(),
+    resource_manager: new ResourceManager(undefined as unknown as Engine),
     current_file: undefined,
   });
 

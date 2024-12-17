@@ -19,7 +19,7 @@
 	- Editor
 		- ✅UUID Generator
 		- ❌Automatic UUID generator for files
-		- ❌Folder structure viewer
+		- ✅Folder structure viewer
 		- ❌JSON generator for (scenes, entities, components)
 - Tests
     - ✅WorldManager

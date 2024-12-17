@@ -1,5 +1,7 @@
 import { FileConfig, FileResourceType } from "Engine/Config/FileResourceConfig";
 import log from "loglevel";
+import Manager from ".";
+import Engine from "Engine";
 
 /**
  * A resource managed by the manager.
@@ -26,14 +28,21 @@ type Resource = {
  * A resource manager keeps track of UUID-marked resources and loads them dynamically at runtime.
  * Does not currently supported unloading of resources.
  */
-export class ResourceManager {
+export class ResourceManager extends Manager {
+    static name: string = "ResourceManager";
+
     /**
      * A dictionary mapping UUIDs to the resource.
      */
     private resources: Map<string, Resource>;
 
-    constructor() {
+    constructor(engine: Engine) {
+        super(engine);
         this.resources = new Map<string, Resource>();
+    }
+
+    protected get_name(): string {
+        return ResourceManager.name;
     }
 
     /**

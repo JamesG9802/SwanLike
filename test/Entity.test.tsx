@@ -12,6 +12,7 @@ import file_config_resource from "Resources/Config/resource.config.json";
 import { FileConfig } from "Engine/Config/FileResourceConfig";
 import { ApplicationConfig } from "Engine/Config/AppConfig";
 import { InputManager } from "Engine/Manager/InputManager";
+import Engine from "Engine";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -31,9 +32,13 @@ class TestComponent extends Component {
 
 describe("Entity", () => {
     let entity: Entity;
-    const resource_manager: ResourceManager = undefined as unknown as ResourceManager;
-    const input_manager: InputManager = undefined as unknown as InputManager;
-    const world_manager: WorldManager = undefined as unknown as WorldManager;
+
+    const engine: Engine = new Engine();
+    const resource_manager: ResourceManager = {name: ResourceManager.name} as unknown as ResourceManager;
+    const input_manager: InputManager = {name: ResourceManager.name} as unknown as InputManager;
+    const world_manager: WorldManager = {name: ResourceManager.name} as unknown as WorldManager;
+
+    engine.add_managers(resource_manager, input_manager, world_manager);
 
     beforeEach(() => {
         entity = new Entity("TestEntity");
@@ -46,7 +51,7 @@ describe("Entity", () => {
 
     it("should add components to future", () => {
         entity.start();
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
         const start_spy = vi.spyOn(mockComponent1, "start");
         entity.add_components(mockComponent1);
         expect(entity.get_components().get("TestComponent")).toBe(mockComponent1);
@@ -54,7 +59,7 @@ describe("Entity", () => {
     });
 
     it("should add components to current", () => {
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
         const start_spy = vi.spyOn(mockComponent1, "start");
         const update_spy = vi.spyOn(mockComponent1, "update");
         entity.add_components(mockComponent1);
@@ -66,8 +71,8 @@ describe("Entity", () => {
     });
 
     it("should not add duplicate components ", () => {
-        const component_1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
-        const component_2 = new TestComponent(false, entity, resource_manager, world_manager, input_manager);
+        const component_1 = new TestComponent(true, entity, engine);
+        const component_2 = new TestComponent(false, entity, engine);
         entity.add_components(component_1, component_2);
 
         expect(log.warn).toHaveBeenCalledWith(`Entity ${entity.name} already has ${component_1.name}.`);
@@ -77,7 +82,7 @@ describe("Entity", () => {
     });
 
     it("should call start on all components", () => {
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
 
         const component1_spy = vi.spyOn(mockComponent1, "start");
 
@@ -89,7 +94,7 @@ describe("Entity", () => {
     });
 
     it("should call update only on active components", () => {
-        const inactiveComponent = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const inactiveComponent = new TestComponent(true, entity, engine);
         inactiveComponent.active = false;
 
         const inactive_spy = vi.spyOn(inactiveComponent, "update");
@@ -110,14 +115,14 @@ describe("Entity", () => {
     });
 
     it("should query entity for components", () => {
-        const testComponent = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const testComponent = new TestComponent(true, entity, engine);
         entity.add_components(testComponent);
 
         expect(entity.get_components().get("TestComponent")).toBeDefined();
     });
 
     it("should dispose of components during cleanup", () => {
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
 
         const component1_spy = vi.spyOn(mockComponent1, "dispose");
 
@@ -129,7 +134,7 @@ describe("Entity", () => {
     });
     
     it("should dispose of components that are marked for destruction", () => {
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
 
         const component1_spy = vi.spyOn(mockComponent1, "dispose");
 
@@ -144,7 +149,7 @@ describe("Entity", () => {
     });
 
     it("should remove components by marking them for destruction", () => {
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
 
         const component1_spy = vi.spyOn(mockComponent1, "destroy");
 
@@ -163,7 +168,7 @@ describe("Entity", () => {
     it("should not update newly added components when marked for destruction", () => {
         entity.start();
 
-        const mockComponent1 = new TestComponent(true, entity, resource_manager, world_manager, input_manager);
+        const mockComponent1 = new TestComponent(true, entity, engine);
 
         const start_spy = vi.spyOn(mockComponent1, "start");
         const destroy_spy = vi.spyOn(mockComponent1, "destroy");
@@ -180,16 +185,21 @@ describe("Entity", () => {
 });
 
 describe("parse_entities_from_config", async () => {
-    const resource_manager: ResourceManager = new ResourceManager();
-    await resource_manager.initialize(file_config_resource as FileConfig);
+    const engine: Engine = new Engine();
 
-    const input_manager: InputManager = new InputManager();
+    const resource_manager: ResourceManager = new ResourceManager(engine);
+    await resource_manager.initialize(file_config_resource as FileConfig);
+    engine.add_managers(resource_manager);
+
+
+    const input_manager: InputManager = new InputManager(engine);
+    engine.add_managers(input_manager);
 
     const world_manager: WorldManager = new WorldManager(
-        (app_config_resource as ApplicationConfig).start_scene, 
-        resource_manager,
-        input_manager
+        engine 
     );
+    engine.add_managers(world_manager);
+
     await world_manager.change_scene((app_config_resource as ApplicationConfig).start_scene);
 
     it("should parse an entity from a config", async () => {
@@ -214,7 +224,7 @@ describe("parse_entities_from_config", async () => {
             "scale": [1, 1, 1]
         };
 
-        const entity = await parse_entities_from_config(entityConfig, resource_manager, world_manager, input_manager);
+        const entity = await parse_entities_from_config(entityConfig, engine);
 
         expect(entity).toBeInstanceOf(Entity);
         expect(entity.name).toBe("Entity 1");
@@ -245,7 +255,7 @@ describe("parse_entities_from_config", async () => {
 
         const mockError = "Component did not load.";
 
-        const entity = await parse_entities_from_config(entityConfig, resource_manager, world_manager, input_manager);
+        const entity = await parse_entities_from_config(entityConfig, engine);
 
         expect(entity).toBeInstanceOf(Entity);
         expect(entity.get_components().size).toBe(1);

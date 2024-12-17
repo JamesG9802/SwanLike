@@ -1,9 +1,13 @@
 import { Vector2 } from "three";
+import Manager from ".";
+import Engine from "Engine";
 
 /**
  * An input manager keeps track of all possible input events (mouse position, button state, etc.).
  */
-export class InputManager {
+export class InputManager extends Manager{
+    static name: string = "InputManager";
+
     /**
      * The size of the canvas that the mouse is on.
      */
@@ -23,10 +27,15 @@ export class InputManager {
      * Initializes the input manager with the mouse placed at the top-left
      * and the canvas set to 1x1 px^2.
      */
-    constructor() {
+    constructor(engine: Engine) {
+        super(engine);
         this.canvas_size = new Vector2(1, 1);
         this.mouse_pos = new Vector2(0, 0);
         this.mouse_ndc = new Vector2(-1, -1);
+    }
+
+    protected get_name(): string {
+        return InputManager.name;
     }
 
     /**

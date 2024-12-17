@@ -2,11 +2,9 @@ import log from "loglevel";
 
 import * as THREE from 'three';
 
-import Component, { parse_components_from_config } from "./Component"
-import { ResourceManager } from '../Manager/ResourceManager';
-import { WorldManager } from "../Manager/WorldManager";
+import Component, { parse_components_from_config } from "./Component";
 import { EntityConfig } from "Engine/Config/EntityConfig";
-import { InputManager } from "Engine/Manager/InputManager";
+import Engine from "Engine";
 
 /**
  * An entity is a basic Object3D with support for component scripts.
@@ -225,14 +223,11 @@ export class Entity extends THREE.Object3D {
 /**
  * Parses an entity from a config JSON.
  * @param entity_config the entity JSON.
- * @param resource_manager the resource manager.
- * @param world_manager the world manager.
+ * @param engine the Three.JS engine
  * @returns 
  */
 export async function parse_entities_from_config(entity_config: EntityConfig,
-    resource_manager: ResourceManager, 
-    world_manager: WorldManager,
-    input_manager: InputManager,
+    engine: Engine
 ): Promise<Entity> {
     const entity = new Entity(entity_config.name);
 
@@ -249,10 +244,8 @@ export async function parse_entities_from_config(entity_config: EntityConfig,
         promises.push(
             parse_components_from_config(
                 entity_config.components[i], 
-                entity, 
-                resource_manager, 
-                world_manager,
-                input_manager
+                entity,
+                engine
             )
         );
     }

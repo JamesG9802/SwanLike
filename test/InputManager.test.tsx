@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { InputManager } from "Engine/Manager/InputManager";
+import Engine from "Engine";
 
 vi.mock("loglevel", () => ({
     default: {
@@ -8,10 +9,11 @@ vi.mock("loglevel", () => ({
 }));
 
 describe("InputManager", () => {
+    const engine: Engine = new Engine();
     let input_manager: InputManager;
 
     beforeEach(() => {
-        input_manager = new InputManager();
+        input_manager = new InputManager(engine);
     });
 
     it("should react to mouse move (top left)", () => {
